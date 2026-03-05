@@ -1,0 +1,14 @@
+pdfplumber
+fitz
+pymongo
+PyMuPDF
+PyPDF2
+pdfminer.six
+pytesseract
+transformers
+sentence_transformers
+numpy
+torch
+spacy
+rapidfuzz
+dateparser

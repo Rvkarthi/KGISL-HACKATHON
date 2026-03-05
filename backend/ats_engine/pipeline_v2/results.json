@@ -1,0 +1,1746 @@
+{
+  "job_role": "web_developer",
+  "ats_results": [
+    {
+      "name": "Vengatesan G",
+      "filename": "Vengatesan - Resume.pdf",
+      "total_score": 23.1,
+      "fields": {
+        "about": {
+          "score": 0.0,
+          "weight": 0.12,
+          "weighted": 0.0,
+          "detail": "no summary \u2014 full-text fallback (\u00d70.6)  raw=0.526"
+        },
+        "skills": {
+          "score": 18.2,
+          "weight": 0.3,
+          "weighted": 5.5,
+          "detail": "no req/pref lists \u2014 pure semantic \u00d70.85  |  cosine 21%  raw=0.629"
+        },
+        "experience": {
+          "score": 40.0,
+          "weight": 0.18,
+          "weighted": 7.2,
+          "detail": "Fresher (fresher-friendly role)"
+        },
+        "projects": {
+          "score": 0.0,
+          "weight": 0.22,
+          "weighted": 0.0,
+          "detail": "No projects found"
+        },
+        "education": {
+          "score": 70.0,
+          "weight": 0.08,
+          "weighted": 5.6,
+          "detail": "4 degree(s) \u2014 best: GPA 8.4 | CGPA : 8.4/10.0",
+          "entries": [
+            {
+              "entry": "Bachelor of Computer science and Full-stack web application for user | ",
+              "score": 60.0,
+              "detail": "GPA 8.4"
+            },
+            {
+              "entry": "ment management. | CGPA : 8.4/10.0",
+              "score": 65.0,
+              "detail": "GPA 8.4 | CGPA : 8.4/10.0"
+            },
+            {
+              "entry": "backend processing for managing course | ",
+              "score": 60.0,
+              "detail": "GPA 8.4"
+            },
+            {
+              "entry": "ments. | Percentage : 81/100",
+              "score": 65.0,
+              "detail": "GPA 8.4 | Percentage : 81/100"
+            }
+          ]
+        },
+        "achievements": {
+          "score": 1.6,
+          "weight": 0.05,
+          "weighted": 0.1,
+          "detail": "7 achievement(s) \u2014 cosine averaged",
+          "entries": [
+            {
+              "entry": "Database: MYSQL",
+              "score": 0.0,
+              "raw_cosine": 0.547
+            },
+            {
+              "entry": "Secured Runner-Up position in a Mathematical Quiz",
+              "score": 0.0,
+              "raw_cosine": 0.397
+            },
+            {
+              "entry": "API Tools: Postman(API testing)",
+              "score": 11.5,
+              "raw_cosine": 0.593
+            },
+            {
+              "entry": "competition, demonstrating strong analytical and problem-",
+              "score": 0.0,
+              "raw_cosine": 0.393
+            },
+            {
+              "entry": "UI/UX Design: Figma",
+              "score": 0.0,
+              "raw_cosine": 0.502
+            },
+            {
+              "entry": "solving skills.",
+              "score": 0.0,
+              "raw_cosine": 0.498
+            },
+            {
+              "entry": "Shortlisted for final presentation in a technical paper",
+              "score": 0.0,
+              "raw_cosine": 0.504
+            }
+          ]
+        },
+        "soft_skills": {
+          "score": 100.0,
+          "weight": 0.03,
+          "weighted": 3.0,
+          "detail": "5 skill(s): Teamwork, Time Management, Leadership Developed A Responsive Frontend Music Application With An, Critical Thinking Ensured Smooth Performance And Compatibility Across Multiple"
+        },
+        "languages": {
+          "score": 90.0,
+          "weight": 0.02,
+          "weighted": 1.8,
+          "detail": "English, Tamil"
+        }
+      }
+    },
+    {
+      "name": "Unknown Candidate",
+      "filename": "don2.pdf",
+      "total_score": 22.7,
+      "fields": {
+        "about": {
+          "score": 4.0,
+          "weight": 0.12,
+          "weighted": 0.5,
+          "detail": "58 words  raw=0.565"
+        },
+        "skills": {
+          "score": 15.2,
+          "weight": 0.3,
+          "weighted": 4.6,
+          "detail": "no req/pref lists \u2014 pure semantic \u00d70.85  |  cosine 18%  raw=0.616"
+        },
+        "experience": {
+          "score": 40.0,
+          "weight": 0.18,
+          "weighted": 7.2,
+          "detail": "Fresher (fresher-friendly role)"
+        },
+        "projects": {
+          "score": 10.4,
+          "weight": 0.22,
+          "weighted": 2.3,
+          "detail": "5 project(s)  |  min 0  |  avg cosine 10%",
+          "entries": [
+            {
+              "entry": "PROJECTS (Frontend & Python Basics) \u2022Computer & Internet",
+              "score": 4.3,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.566
+            },
+            {
+              "entry": "Personal Portfolio Website \u0000HTML, CSS\u0000",
+              "score": 5.1,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.569
+            },
+            {
+              "entry": "Various Web Applications",
+              "score": 22.7,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.634
+            },
+            {
+              "entry": "Front-end",
+              "score": 10.2,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.588
+            },
+            {
+              "entry": "MERN Stack Web Development Projects",
+              "score": 9.5,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.585
+            }
+          ]
+        },
+        "education": {
+          "score": 70.0,
+          "weight": 0.08,
+          "weighted": 5.6,
+          "detail": "3 degree(s) \u2014 best: no GPA | NCC Cadet with participation i",
+          "entries": [
+            {
+              "entry": "B.E COMPUTER SCIENCE \u200b | NCC Cadet with participation in training",
+              "score": 65.0,
+              "detail": "no GPA | NCC Cadet with participation i"
+            },
+            {
+              "entry": "basic training in HTML | ",
+              "score": 60.0,
+              "detail": "no GPA"
+            },
+            {
+              "entry": "mentals. | Improved knowledge in stock market and",
+              "score": 65.0,
+              "detail": "no GPA | Improved knowledge in stock ma"
+            }
+          ]
+        },
+        "achievements": {
+          "score": 0.0,
+          "weight": 0.05,
+          "weighted": 0.0,
+          "detail": "No achievements"
+        },
+        "soft_skills": {
+          "score": 25.0,
+          "weight": 0.03,
+          "weighted": 0.8,
+          "detail": "1 skill(s): Good Discipline And Teamwork Skills"
+        },
+        "languages": {
+          "score": 90.0,
+          "weight": 0.02,
+          "weighted": 1.8,
+          "detail": "Tamil, English"
+        }
+      }
+    },
+    {
+      "name": "Sakthivel N",
+      "filename": "SAKTHIVEL N.pdf",
+      "total_score": 22.2,
+      "fields": {
+        "about": {
+          "score": 23.3,
+          "weight": 0.12,
+          "weighted": 2.8,
+          "detail": "44 words  raw=0.636"
+        },
+        "skills": {
+          "score": 16.1,
+          "weight": 0.3,
+          "weighted": 4.8,
+          "detail": "no req/pref lists \u2014 pure semantic \u00d70.85  |  cosine 19%  raw=0.620"
+        },
+        "experience": {
+          "score": 40.0,
+          "weight": 0.18,
+          "weighted": 7.2,
+          "detail": "Fresher (fresher-friendly role)"
+        },
+        "projects": {
+          "score": 0.0,
+          "weight": 0.22,
+          "weighted": 0.0,
+          "detail": "No projects found"
+        },
+        "education": {
+          "score": 70.0,
+          "weight": 0.08,
+          "weighted": 5.6,
+          "detail": "2 degree(s) \u2014 best: no GPA | A.V.C.COLLEGE OF ENGINEERING",
+          "entries": [
+            {
+              "entry": "BACHELOR OF COMPUTER SCIENCE | A.V.C.COLLEGE OF ENGINEERING",
+              "score": 65.0,
+              "detail": "no GPA | A.V.C.COLLEGE OF ENGINEERING"
+            },
+            {
+              "entry": "me Management CERTIFICATION | ",
+              "score": 60.0,
+              "detail": "no GPA"
+            }
+          ]
+        },
+        "achievements": {
+          "score": 0.0,
+          "weight": 0.05,
+          "weighted": 0.0,
+          "detail": "No achievements"
+        },
+        "soft_skills": {
+          "score": 0.0,
+          "weight": 0.03,
+          "weighted": 0.0,
+          "detail": "None listed"
+        },
+        "languages": {
+          "score": 90.0,
+          "weight": 0.02,
+          "weighted": 1.8,
+          "detail": "English, Tamil"
+        }
+      }
+    },
+    {
+      "name": "K.Nandhaganapathy Cs",
+      "filename": "NandhaganapathyResume.pdf (2).pdf",
+      "total_score": 18.2,
+      "fields": {
+        "about": {
+          "score": 0.0,
+          "weight": 0.12,
+          "weighted": 0.0,
+          "detail": "76 words  raw=0.548"
+        },
+        "skills": {
+          "score": 10.8,
+          "weight": 0.3,
+          "weighted": 3.2,
+          "detail": "no req/pref lists \u2014 pure semantic \u00d70.85  |  cosine 13%  raw=0.597"
+        },
+        "experience": {
+          "score": 40.0,
+          "weight": 0.18,
+          "weighted": 7.2,
+          "detail": "Fresher (fresher-friendly role)"
+        },
+        "projects": {
+          "score": 3.4,
+          "weight": 0.22,
+          "weighted": 0.8,
+          "detail": "11 project(s)  |  min 0  |  avg cosine 3%",
+          "entries": [
+            {
+              "entry": "Courses - Full stack (novitech)",
+              "score": 0.0,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.458
+            },
+            {
+              "entry": "Calculator",
+              "score": 0.0,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.507
+            },
+            {
+              "entry": "Random Password Generator",
+              "score": 7.9,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.579
+            },
+            {
+              "entry": "English",
+              "score": 0.0,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.524
+            },
+            {
+              "entry": "NaanMudhalvan Project",
+              "score": 0.0,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.51
+            },
+            {
+              "entry": "Basic",
+              "score": 0.0,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.508
+            },
+            {
+              "entry": "Product catolog with MongoDB",
+              "score": 0.0,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.523
+            },
+            {
+              "entry": "Tamil",
+              "score": 2.1,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.558
+            },
+            {
+              "entry": "Grocery web",
+              "score": 7.0,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.576
+            },
+            {
+              "entry": "Native",
+              "score": 2.4,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.559
+            },
+            {
+              "entry": "Simple grocery webpage making with a html,css,basic js",
+              "score": 18.2,
+              "technologies": [],
+              "url": "",
+              "raw_cosine": 0.617
+            }
+          ]
+        },
+        "education": {
+          "score": 65.0,
+          "weight": 0.08,
+          "weighted": 5.2,
+          "detail": "1 degree(s) \u2014 best: no GPA | Problem-solving ability",
+          "entries": [
+            {
+              "entry": "me management | Problem-solving ability",
+              "score": 65.0,
+              "detail": "no GPA | Problem-solving ability"
+            }
+          ]
+        },
+        "achievements": {
+          "score": 0.0,
+          "weight": 0.05,
+          "weighted": 0.0,
+          "detail": "No achievements"
+        },
+        "soft_skills": {
+          "score": 0.0,
+          "weight": 0.03,
+          "weighted": 0.0,
+          "detail": "None listed"
+        },
+        "languages": {
+          "score": 90.0,
+          "weight": 0.02,
+          "weighted": 1.8,
+          "detail": "English, Tamil"
+        }
+      }
+    },
+    {
+      "name": "Jackson Career Objective",
+      "filename": "web-developer-resume-example.pdf",
+      "total_score": 16.8,
+      "fields": {
+        "about": {
+          "score": 3.4,
+          "weight": 0.12,
+          "weighted": 0.4,
+          "detail": "no summary \u2014 full-text fallback (\u00d70.6)  raw=0.571"
+        },
+        "skills": {
+          "score": 11.9,
+          "weight": 0.3,
+          "weighted": 3.6,
+          "detail": "no req/pref lists \u2014 pure semantic \u00d70.85  |  cosine 14%  raw=0.602"
+        },
+        "experience": {
+          "score": 40.0,
+          "weight": 0.18,
+          "weighted": 7.2,
+          "detail": "Fresher (fresher-friendly role)"
+        },
+        "projects": {
+          "score": 0.0,
+          "weight": 0.22,
+          "weighted": 0.0,
+          "detail": "No projects found"
+        },
+        "education": {
+          "score": 70.0,
+          "weight": 0.08,
+          "weighted": 5.6,
+          "detail": "7 degree(s) \u2014 best: no GPA | standards.",
+          "entries": [
+            {
+              "entry": "B.S. | standards.",
+              "score": 65.0,
+              "detail": "no GPA | standards."
+            },
+            {
+              "entry": "me designs from client requests. | ",
+              "score": 60.0,
+              "detail": "no GPA"
+            },
+            {
+              "entry": "base to AWS | ",
+              "score": 60.0,
+              "detail": "no GPA"
+            },
+            {
+              "entry": "ber 2012 - June 2016 $3 | ",
+              "score": 60.0,
+              "detail": "no GPA"
+            },
+            {
+              "entry": "mentation to teach new team members company | ",
+              "score": 60.0,
+              "detail": "no GPA"
+            },
+            {
+              "entry": "best practices in React.js and Node.js. | ",
+              "score": 60.0,
+              "detail": "no GPA"
+            },
+            {
+              "entry": "me lead prioritization using | ",
+              "score": 60.0,
+              "detail": "no GPA"
+            }
+          ]
+        },
+        "achievements": {
+          "score": 0.0,
+          "weight": 0.05,
+          "weighted": 0.0,
+          "detail": "No achievements"
+        },
+        "soft_skills": {
+          "score": 0.0,
+          "weight": 0.03,
+          "weighted": 0.0,
+          "detail": "None listed"
+        },
+        "languages": {
+          "score": 0.0,
+          "weight": 0.02,
+          "weighted": 0.0,
+          "detail": "None listed"
+        }
+      }
+    },
+    {
+      "name": "Unknown Candidate",
+      "filename": "final.pdf",
+      "total_score": 15.8,
+      "fields": {
+        "about": {
+          "score": 0.0,
+          "weight": 0.12,
+          "weighted": 0.0,
+          "detail": "no summary \u2014 full-text fallback (\u00d70.6)  raw=0.508"
+        },
+        "skills": {
+          "score": 22.6,
+          "weight": 0.3,
+          "weighted": 6.8,
+          "detail": "no req/pref lists \u2014 pure semantic \u00d70.85  |  cosine 27%  raw=0.649"
+        },
+        "experience": {
+          "score": 40.0,
+          "weight": 0.18,
+          "weighted": 7.2,
+          "detail": "Fresher (fresher-friendly role)"
+        },
+        "projects": {
+          "score": 0.0,
+          "weight": 0.22,
+          "weighted": 0.0,
+          "detail": "No projects found"
+        },
+        "education": {
+          "score": 0.0,
+          "weight": 0.08,
+          "weighted": 0.0,
+          "detail": "No education records"
+        },
+        "achievements": {
+          "score": 0.0,
+          "weight": 0.05,
+          "weighted": 0.0,
+          "detail": "No achievements"
+        },
+        "soft_skills": {
+          "score": 0.0,
+          "weight": 0.03,
+          "weighted": 0.0,
+          "detail": "None listed"
+        },
+        "languages": {
+          "score": 90.0,
+          "weight": 0.02,
+          "weighted": 1.8,
+          "detail": "Tamil, English"
+        }
+      }
+    },
+    {
+      "name": "Nandhaganapathy. K",
+      "filename": "resume.pdf",
+      "total_score": 12.4,
+      "fields": {
+        "about": {
+          "score": 0.0,
+          "weight": 0.12,
+          "weighted": 0.0,
+          "detail": "24 words  raw=0.422"
+        },
+        "skills": {
+          "score": 0.0,
+          "weight": 0.3,
+          "weighted": 0.0,
+          "detail": "no req/pref lists \u2014 pure semantic \u00d70.85  |  cosine 0%  raw=0.000"
+        },
+        "experience": {
+          "score": 40.0,
+          "weight": 0.18,
+          "weighted": 7.2,
+          "detail": "Fresher (fresher-friendly role)"
+        },
+        "projects": {
+          "score": 0.0,
+          "weight": 0.22,
+          "weighted": 0.0,
+          "detail": "No projects found"
+        },
+        "education": {
+          "score": 65.0,
+          "weight": 0.08,
+          "weighted": 5.2,
+          "detail": "1 degree(s) \u2014 best: no GPA | Date of Birth : 2006-05-14",
+          "entries": [
+            {
+              "entry": "me : Kittappa S | Date of Birth : 2006-05-14",
+              "score": 65.0,
+              "detail": "no GPA | Date of Birth : 2006-05-14"
+            }
+          ]
+        },
+        "achievements": {
+          "score": 0.0,
+          "weight": 0.05,
+          "weighted": 0.0,
+          "detail": "No achievements"
+        },
+        "soft_skills": {
+          "score": 0.0,
+          "weight": 0.03,
+          "weighted": 0.0,
+          "detail": "None listed"
+        },
+        "languages": {
+          "score": 0.0,
+          "weight": 0.02,
+          "weighted": 0.0,
+          "detail": "None listed"
+        }
+      }
+    },
+    {
+      "name": "Mern Stack Developer",
+      "filename": "Green and White Simple Infographic Resume_20260119_204733_0000.pdf",
+      "total_score": 11.1,
+      "fields": {
+        "about": {
+          "score": 13.8,
+          "weight": 0.12,
+          "weighted": 1.7,
+          "detail": "82 words  raw=0.601"
+        },
+        "skills": {
+          "score": 0.7,
+          "weight": 0.3,
+          "weighted": 0.2,
+          "detail": "no req/pref lists \u2014 pure semantic \u00d70.85  |  cosine 1%  raw=0.553"
+        },
+        "experience": {
+          "score": 40.0,
+          "weight": 0.18,
+          "weighted": 7.2,
+          "detail": "Fresher (fresher-friendly role)"
+        },
+        "projects": {
+          "score": 0.0,
+          "weight": 0.22,
+          "weighted": 0.0,
+          "detail": "No projects found"
+        },
+        "education": {
+          "score": 0.0,
+          "weight": 0.08,
+          "weighted": 0.0,
+          "detail": "No education records"
+        },
+        "achievements": {
+          "score": 0.0,
+          "weight": 0.05,
+          "weighted": 0.0,
+          "detail": "No achievements"
+        },
+        "soft_skills": {
+          "score": 0.0,
+          "weight": 0.03,
+          "weighted": 0.0,
+          "detail": "None listed"
+        },
+        "languages": {
+          "score": 100.0,
+          "weight": 0.02,
+          "weighted": 2.0,
+          "detail": "English, Tamil, Hindi"
+        }
+      }
+    },
+    {
+      "name": "Deep Learning Engineer",
+      "filename": "Samson Crist - Resume.pdf",
+      "total_score": 6.4,
+      "fields": {
+        "about": {
+          "score": 0.0,
+          "weight": 0.12,
+          "weighted": 0.0,
+          "detail": "no summary \u2014 full-text fallback (\u00d70.6)  raw=0.457"
+        },
+        "skills": {
+          "score": 0.0,
+          "weight": 0.3,
+          "weighted": 0.0,
+          "detail": "no req/pref lists \u2014 pure semantic \u00d70.85  |  cosine 0%  raw=0.477"
+        },
+        "experience": {
+          "score": 0.0,
+          "weight": 0.18,
+          "weighted": 0.0,
+          "detail": "1 job(s) \u2014 50% cosine + 50% keyword overlap",
+          "entries": [
+            {
+              "entry": "optimization. @ performance by 25%. [01/2020\u2013PRESENT]",
+              "score": 0.0,
+              "cosine": 0.0,
+              "kw_overlap": 0.0
+            }
+          ]
+        },
+        "projects": {
+          "score": 0.0,
+          "weight": 0.22,
+          "weighted": 0.0,
+          "detail": "No projects found"
+        },
+        "education": {
+          "score": 60.0,
+          "weight": 0.08,
+          "weighted": 4.8,
+          "detail": "1 degree(s) \u2014 best: no GPA",
+          "entries": [
+            {
+              "entry": "Master of Science | ",
+              "score": 60.0,
+              "detail": "no GPA"
+            }
+          ]
+        },
+        "achievements": {
+          "score": 1.5,
+          "weight": 0.05,
+          "weighted": 0.1,
+          "detail": "8 achievement(s) \u2014 cosine averaged",
+          "entries": [
+            {
+              "entry": "Computer Science",
+              "score": 0.0,
+              "raw_cosine": 0.544
+            },
+            {
+              "entry": "Certified TensorFlow Developer (CTD)",
+              "score": 12.1,
+              "raw_cosine": 0.595
+            },
+            {
+              "entry": "University of California, Berkeley",
+              "score": 0.0,
+              "raw_cosine": 0.455
+            },
+            {
+              "entry": "2015 TensorFlow",
+              "score": 0.0,
+              "raw_cosine": 0.458
+            },
+            {
+              "entry": "Bachelor of Science 2019 - Present",
+              "score": 0.0,
+              "raw_cosine": 0.483
+            },
+            {
+              "entry": "Certified Deep Learning Associate (CDLA)",
+              "score": 0.0,
+              "raw_cosine": 0.481
+            },
+            {
+              "entry": "DeepLearning.AI",
+              "score": 0.0,
+              "raw_cosine": 0.491
+            },
+            {
+              "entry": "2018 - Present",
+              "score": 0.0,
+              "raw_cosine": 0.47
+            }
+          ]
+        },
+        "soft_skills": {
+          "score": 50.0,
+          "weight": 0.03,
+          "weighted": 1.5,
+          "detail": "2 skill(s): Ai Engineer Effective Communication, Communication Skills Expert"
+        },
+        "languages": {
+          "score": 0.0,
+          "weight": 0.02,
+          "weighted": 0.0,
+          "detail": "None listed"
+        }
+      }
+    }
+  ],
+  "clusters": {
+    "\ud83c\udf10 Web / Full Stack": [
+      {
+        "primary": "\ud83c\udf10 Web / Full Stack",
+        "primary_score": 100.0,
+        "secondary": "\ud83d\udcca Data Science / Analytics",
+        "secondary_score": 82.8,
+        "richness": 43,
+        "reason": "confident",
+        "name": "Vengatesan G",
+        "filename": "Vengatesan - Resume.pdf",
+        "top_skills": [
+          "+91 7538802537 IntelliJ",
+          "vengatganesan2206@gmail.com VS code",
+          "Kumbakonam",
+          "Thanjavur Figma",
+          "linkedin.com",
+          "in"
+        ],
+        "is_fresher": true
+      },
+      {
+        "primary": "\ud83c\udf10 Web / Full Stack",
+        "primary_score": 100.0,
+        "secondary": "\ud83d\udcca Data Science / Analytics",
+        "secondary_score": 82.4,
+        "richness": 65,
+        "reason": "confident",
+        "name": "Unknown Candidate",
+        "filename": "don2.pdf",
+        "top_skills": [
+          "and programming skills.",
+          "html CSS Python JavaScript Node.js Git developed through NCC.",
+          "GitHub Internet & MS Office Basics Trading Knowledge",
+          "INTERESTS",
+          "ECommerce",
+          "\u200b INTERESTS"
+        ],
+        "is_fresher": true
+      },
+      {
+        "primary": "\ud83c\udf10 Web / Full Stack",
+        "primary_score": 100.0,
+        "secondary": "\ud83d\udcf1 Mobile Development",
+        "secondary_score": 82.8,
+        "richness": 35,
+        "reason": "confident",
+        "name": "Jackson Career Objective",
+        "filename": "web-developer-resume-example.pdf",
+        "top_skills": [
+          "JavaScript",
+          "HTML Web Designer",
+          "CSS Coca",
+          "Cola",
+          "React.js January 2017",
+          "August 2020 Atlanta"
+        ],
+        "is_fresher": true
+      },
+      {
+        "primary": "\ud83c\udf10 Web / Full Stack",
+        "primary_score": 98.1,
+        "secondary": "\ud83d\udcca Data Science / Analytics",
+        "secondary_score": 86.0,
+        "richness": 69,
+        "reason": "confident",
+        "name": "K.Nandhaganapathy Cs",
+        "filename": "NandhaganapathyResume.pdf (2).pdf",
+        "top_skills": [
+          "Completed Typewriting course",
+          "Programming Languages: Java",
+          "Python",
+          "Web Technologies: HTML",
+          "CSS",
+          "JavaScript (Basics) Trained in Karate"
+        ],
+        "is_fresher": true
+      },
+      {
+        "primary": "\ud83c\udf10 Web / Full Stack",
+        "primary_score": 97.5,
+        "secondary": "\ud83d\udcca Data Science / Analytics",
+        "secondary_score": 82.5,
+        "richness": 48,
+        "reason": "confident",
+        "name": "Mern Stack Developer",
+        "filename": "Green and White Simple Infographic Resume_20260119_204733_0000.pdf",
+        "top_skills": [
+          "Contact (2023",
+          "2027)",
+          "ANNA UNIVERSITY",
+          "6381 944 244",
+          "Bachelor of Engineering",
+          "nandhaganapathy@gmail.com 84%"
+        ],
+        "is_fresher": true
+      },
+      {
+        "primary": "\ud83c\udf10 Web / Full Stack",
+        "primary_score": 96.5,
+        "secondary": "\ud83d\udcca Data Science / Analytics",
+        "secondary_score": 81.0,
+        "richness": 40,
+        "reason": "confident",
+        "name": "Sakthivel N",
+        "filename": "SAKTHIVEL N.pdf",
+        "top_skills": [
+          "Participated in UI & UX Design Workshop",
+          "conducted at NIT",
+          "ENGLISH",
+          "Certified Full Stack Developer",
+          "Novi Tech",
+          "TAMIL Platform"
+        ],
+        "is_fresher": true
+      }
+    ],
+    "\ud83e\udde0 Deep Learning / AI": [
+      {
+        "primary": "\ud83e\udde0 Deep Learning / AI",
+        "primary_score": 100.0,
+        "secondary": "\ud83d\udcca Data Science / Analytics",
+        "secondary_score": 82.7,
+        "richness": 55,
+        "reason": "confident",
+        "name": "Deep Learning Engineer",
+        "filename": "Samson Crist - Resume.pdf",
+        "top_skills": [
+          "Analyzed and preprocessed 1TB of large datasets",
+          "ensuring",
+          "99.8% data suitability and reducing training time by 40% using",
+          "TensorFlow",
+          "advanced data augmentation methods.",
+          "Presented deep learning findings to both technical and non"
+        ],
+        "is_fresher": false
+      },
+      {
+        "primary": "\ud83e\udde0 Deep Learning / AI",
+        "primary_score": 100.0,
+        "secondary": "\ud83d\udcca Data Science / Analytics",
+        "secondary_score": 100.0,
+        "richness": 35,
+        "reason": "ambiguous (100.0% vs 100.0%)",
+        "name": "Unknown Candidate",
+        "filename": "final.pdf",
+        "top_skills": [
+          "Python",
+          "JavaScript",
+          "React",
+          "Node.js",
+          "PyTorch",
+          "NumPy"
+        ],
+        "is_fresher": true
+      }
+    ],
+    "\ud83c\udf93 Fresher / General": [
+      {
+        "primary": "\ud83c\udf93 Fresher / General",
+        "primary_score": 100.0,
+        "secondary": null,
+        "secondary_score": 0.0,
+        "richness": 6,
+        "reason": "insufficient content to classify",
+        "name": "Nandhaganapathy. K",
+        "filename": "resume.pdf",
+        "top_skills": [],
+        "is_fresher": true
+      }
+    ]
+  },
+  "parsed_resumes": [
+    {
+      "info": {
+        "name": "Mern Stack Developer",
+        "role": "",
+        "email": "nandhaganapathy@gmail.com",
+        "phone": "(2009 -2023",
+        "address": "Html, Css",
+        "website": "https://www.linkedin.com/in/k-"
+      },
+      "about": "I am a B.E Computer Science and Engineering\nstudent at A. V. C College of Engineering\n(2027) with skills in Java and MERN stack. I Education\nhave solid knowledge of DBMS, Operating\nSystems, and IoT, and hands-on experience (2009 -2023)\nusing VS Code and GitHub for development. I\nam a quick learner with strong problem- RAJ MATRICULATION HIGHER SECONDARY SCHOOL\nsolving and leadership abilities, seeking a\nComputer Science\nfresher opportunity as a Software or Web\n80%\nDeveloper to apply and enhance m",
+      "skills": [
+        "Contact (2023",
+        "2027)",
+        "ANNA UNIVERSITY",
+        "6381 944 244",
+        "Bachelor of Engineering",
+        "nandhaganapathy@gmail.com 84%",
+        "92 Azhagiyanathar kovil",
+        "street",
+        "sholampettai",
+        "mayilladuthurai Experience",
+        "(2020",
+        "2025)",
+        "SENIOR GRAPHIC DESIGNER",
+        "Html",
+        "Css Fauget studio",
+        "Javascript create more than 100 graphic designs",
+        "for big companies",
+        "Java",
+        "complete a lot of complicated work",
+        "React. Js",
+        "node. Js",
+        "Express. Js",
+        "larana",
+        "inc",
+        "MongoDB",
+        "Mysql",
+        "create more than 100 graphic designs"
+      ],
+      "soft_skills": [],
+      "experience": [],
+      "education": [],
+      "projects": [],
+      "languages": [
+        "English",
+        "Tamil",
+        "Hindi"
+      ],
+      "achievements": [],
+      "_meta": {
+        "is_fresher": true,
+        "years_of_experience": 0,
+        "source_file": "Green and White Simple Infographic Resume_20260119_204733_0000.pdf"
+      }
+    },
+    {
+      "info": {
+        "name": "K.Nandhaganapathy Cs",
+        "role": "",
+        "email": "nandhaganapathy@gmail.com",
+        "phone": "6381 944244",
+        "address": "Java, Python",
+        "website": ""
+      },
+      "about": "A motivated B.E. Computer Science and Engineering \u2022 NIT Workshop \u2013 Attended a technical\nstudent with a strong foundation in Java and Frontend\nworkshop at National Institute of Technology\ndevelopment. Equipped with excellent problem-solving (NIT).\nand leadership skills, and a fast learner keen to apply\nand grow technical expertise as a Software or Web\n\u2022 Paper Presentation \u2013 Presented a paper titled\nDeveloper. Experience in graphic design adds a creative \u201cVirtual Herbal Garden\u02ee.\nperspective to bui",
+      "skills": [
+        "Completed Typewriting course",
+        "Programming Languages: Java",
+        "Python",
+        "Web Technologies: HTML",
+        "CSS",
+        "JavaScript (Basics) Trained in Karate",
+        "Database: MySQL Practicing Yoga",
+        "Core Subjects: DBMS",
+        "Operating Systems",
+        "Computer Networks"
+      ],
+      "soft_skills": [],
+      "experience": [],
+      "education": [
+        {
+          "degree": "me management",
+          "institution": "Problem-solving ability",
+          "started": "2020",
+          "ended": "2021",
+          "score": "84",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        }
+      ],
+      "projects": [
+        {
+          "title": "Courses - Full stack (novitech)",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Calculator",
+          "started": "",
+          "ended": "",
+          "description": "Built a basic calculator for arithmetic operations. LANGUAGES",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Random Password Generator",
+          "started": "",
+          "ended": "",
+          "description": "Designed a tool to generate strong random passwords.",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "English",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "NaanMudhalvan Project",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Basic",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Product catolog with MongoDB",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Tamil",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Grocery web",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Native",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Simple grocery webpage making with a html,css,basic js",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        }
+      ],
+      "languages": [
+        "English",
+        "Tamil"
+      ],
+      "achievements": [],
+      "_meta": {
+        "is_fresher": true,
+        "years_of_experience": 0,
+        "source_file": "NandhaganapathyResume.pdf (2).pdf"
+      }
+    },
+    {
+      "info": {
+        "name": "Sakthivel N",
+        "role": "",
+        "email": "sakthipriya54158@gmail.com",
+        "phone": "7010 185 187",
+        "address": "Moongilthottam, Mayiladuthurai",
+        "website": ""
+      },
+      "about": "3/62b Lakshmi Complex\nA Computer Science student with a strong interest in\nMoongilthottam, Mayiladuthurai\nweb development and hands-on experience in HTML,\n7010 185 187 CSS, and basic JavaScript. Passionate about\ncreating responsive and user-friendly websites and\nsakthipriya54158@gmail.com\neager to enhance skills through real-world projects.",
+      "skills": [
+        "Participated in UI & UX Design Workshop",
+        "conducted at NIT",
+        "ENGLISH",
+        "Certified Full Stack Developer",
+        "Novi Tech",
+        "TAMIL Platform"
+      ],
+      "soft_skills": [],
+      "experience": [],
+      "education": [
+        {
+          "degree": "BACHELOR OF COMPUTER SCIENCE",
+          "institution": "A.V.C.COLLEGE OF ENGINEERING",
+          "started": "",
+          "ended": "",
+          "score": "78",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        },
+        {
+          "degree": "me Management CERTIFICATION",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": "78",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        }
+      ],
+      "projects": [],
+      "languages": [
+        "English",
+        "Tamil"
+      ],
+      "achievements": [],
+      "_meta": {
+        "is_fresher": true,
+        "years_of_experience": 0,
+        "source_file": "SAKTHIVEL N.pdf"
+      }
+    },
+    {
+      "info": {
+        "name": "Deep Learning Engineer",
+        "role": "",
+        "email": "example@wozber.com",
+        "phone": "(555) 123-4567",
+        "address": "Francisco, California",
+        "website": ""
+      },
+      "about": "",
+      "skills": [
+        "Analyzed and preprocessed 1TB of large datasets",
+        "ensuring",
+        "99.8% data suitability and reducing training time by 40% using",
+        "TensorFlow",
+        "advanced data augmentation methods.",
+        "Presented deep learning findings to both technical and non",
+        "Keras",
+        "technical stakeholders",
+        "receiving a 95% positive feedback for",
+        "Python",
+        "clarity and relevancy.",
+        "CNN",
+        "XYZ Tech Solutions",
+        "02",
+        "2017",
+        "12",
+        "2019",
+        "Implemented AI algorithms for three projects that increased",
+        "Data preprocessing",
+        "operational efficiency by 17%.",
+        "Mentored two junior AI engineers",
+        "elevating their coding and PyTorch",
+        "deep learning skills by 25%. GPU acceleration",
+        "Initiated a weekly AI research discussion that helped the team",
+        "to be updated on state",
+        "of",
+        "the",
+        "art techniques. RNN",
+        "Integrated a chatbot solution which improved customer Model optimization",
+        "service by 40% in the first year.",
+        "Transformer models",
+        "Developed a recommendation system that boosted sales by",
+        "12%."
+      ],
+      "soft_skills": [
+        "Ai Engineer Effective Communication",
+        "Communication Skills Expert"
+      ],
+      "experience": [
+        {
+          "title": "optimization.",
+          "company": "performance by 25%.",
+          "joined": "01/2020",
+          "left": "PRESENT",
+          "description": "Designed, developed, and optimized deep learning models natural language processing, and recommender deployed in various applications, enhancing image systems. Proficient in both TensorFlow and PyTorch frameworks, with a track record of recognition accuracy by 20% and natural language processing performance by 30%. integrating deep learning capabilities into Collaborated with a team of 10 engineers, integrating deep existing products. Skilled in collaborative work, data preprocessing, and effective model learning capabilities into four existing products, leading to a 15% increase in user engagement. Stayed updated with the latest deep learning research, applying three emerging techniques which improved model"
+        }
+      ],
+      "education": [
+        {
+          "degree": "Master of Science",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": "20",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        }
+      ],
+      "projects": [],
+      "languages": [],
+      "achievements": [
+        "Computer Science",
+        "Certified TensorFlow Developer (CTD)",
+        "University of California, Berkeley",
+        "2015 TensorFlow",
+        "Bachelor of Science 2019 - Present",
+        "Certified Deep Learning Associate (CDLA)",
+        "DeepLearning.AI",
+        "2018 - Present"
+      ],
+      "_meta": {
+        "is_fresher": false,
+        "years_of_experience": 6.2,
+        "source_file": "Samson Crist - Resume.pdf"
+      }
+    },
+    {
+      "info": {
+        "name": "Vengatesan G",
+        "role": "",
+        "email": "vengatganesan2206@gmail.com",
+        "phone": "+91 7538802537",
+        "address": "Kumbakonam, Thanjavur",
+        "website": ""
+      },
+      "about": "",
+      "skills": [
+        "+91 7538802537 IntelliJ",
+        "vengatganesan2206@gmail.com VS code",
+        "Kumbakonam",
+        "Thanjavur Figma",
+        "linkedin.com",
+        "in",
+        "vengatesan",
+        "Git & GitHub",
+        "734164337 Postman",
+        "MYSQL",
+        "Postman",
+        "SOFT SKILLS",
+        "Responsive Music web application 2025",
+        "2026",
+        "Project Management",
+        "Developed a responsive frontend music website focusing on",
+        "usability",
+        "performance",
+        "and cross",
+        "device compatibility.",
+        "interactive and user",
+        "friendly interface.",
+        "devices.",
+        "TECH SKILLS",
+        "Front",
+        "End: HTML",
+        "CSS",
+        "JavaScript",
+        "React.js",
+        "Back",
+        "End: Java",
+        "Spring",
+        "Spring Boot",
+        "Participated in hackathons focusing on problem",
+        "solving and",
+        "English:"
+      ],
+      "soft_skills": [
+        "Teamwork",
+        "Time Management",
+        "Leadership Developed A Responsive Frontend Music Application With An",
+        "Critical Thinking Ensured Smooth Performance And Compatibility Across Multiple",
+        "Tamil: Fluent Teamwork."
+      ],
+      "experience": [],
+      "education": [
+        {
+          "degree": "Bachelor of Computer science and Full-stack web application for user",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": "8.4",
+          "score_max": "10.0",
+          "score_type": "GPA"
+        },
+        {
+          "degree": "ment management.",
+          "institution": "CGPA : 8.4/10.0",
+          "started": "2022",
+          "ended": "2023",
+          "score": "8.4",
+          "score_max": "10.0",
+          "score_type": "GPA"
+        },
+        {
+          "degree": "backend processing for managing course",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": "8.4",
+          "score_max": "10.0",
+          "score_type": "GPA"
+        },
+        {
+          "degree": "ments.",
+          "institution": "Percentage : 81/100",
+          "started": "",
+          "ended": "",
+          "score": "8.4",
+          "score_max": "10.0",
+          "score_type": "GPA"
+        }
+      ],
+      "projects": [],
+      "languages": [
+        "English",
+        "Tamil"
+      ],
+      "achievements": [
+        "Database: MYSQL",
+        "Secured Runner-Up position in a Mathematical Quiz",
+        "API Tools: Postman(API testing)",
+        "competition, demonstrating strong analytical and problem-",
+        "UI/UX Design: Figma",
+        "solving skills.",
+        "Shortlisted for final presentation in a technical paper"
+      ],
+      "_meta": {
+        "is_fresher": true,
+        "years_of_experience": 0,
+        "source_file": "Vengatesan - Resume.pdf"
+      }
+    },
+    {
+      "info": {
+        "name": "Unknown Candidate",
+        "role": "",
+        "email": "sowrirajan2006@gmail.com",
+        "phone": "91 9789501916",
+        "address": "Nadu, Mayiladuthurai",
+        "website": "www.enhancv.com"
+      },
+      "about": "I am a motivated student with basic knowledge in Frontend \u200b Personal Skills\nDevelopment \u0000HTML, CSS\u0000 and Python fundamentals. I also have an Creative problem solver with strong\ninterest and basic understanding of stock market and trading concepts. teamwork skills and effective\nI am eager to learn new technologies and build my career in the IT field.\ncommunication",
+      "skills": [
+        "and programming skills.",
+        "html CSS Python JavaScript Node.js Git developed through NCC.",
+        "GitHub Internet & MS Office Basics Trading Knowledge",
+        "INTERESTS",
+        "ECommerce",
+        "\u200b INTERESTS",
+        "Frontend Development",
+        "English Tamil",
+        "www.enhancv.com Powered by"
+      ],
+      "soft_skills": [
+        "Good Discipline And Teamwork Skills"
+      ],
+      "experience": [],
+      "education": [
+        {
+          "degree": "B.E COMPUTER SCIENCE \u200b",
+          "institution": "NCC Cadet with participation in training",
+          "started": "",
+          "ended": "",
+          "score": null,
+          "score_max": null,
+          "score_type": null
+        },
+        {
+          "degree": "basic training in HTML",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": null,
+          "score_max": null,
+          "score_type": null
+        },
+        {
+          "degree": "mentals.",
+          "institution": "Improved knowledge in stock market and",
+          "started": "08/2023",
+          "ended": "05/2027",
+          "score": null,
+          "score_max": null,
+          "score_type": null
+        }
+      ],
+      "projects": [
+        {
+          "title": "PROJECTS (Frontend & Python Basics) \u2022Computer & Internet",
+          "started": "01/2024",
+          "ended": "PRESENT",
+          "description": "Learning New Technologies",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Personal Portfolio Website \u0000HTML, CSS\u0000",
+          "started": "",
+          "ended": "",
+          "description": "Designed a simple personal portfolio website using HTML and CSS. INDUSTRY EXPERTISE Created sections like About Me, Skills, and Contact. Learned basic webpage structure and responsive design concepts. TRADING",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Various Web Applications",
+          "started": "01/2024",
+          "ended": "12/2026",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "Front-end",
+          "started": "",
+          "ended": "",
+          "description": "",
+          "technologies": [],
+          "url": ""
+        },
+        {
+          "title": "MERN Stack Web Development Projects",
+          "started": "",
+          "ended": "",
+          "description": "Interactive chatbot with user-based responses Real-time messaging with authentication Quiz app with score tracking Enterprise level E-commerce application",
+          "technologies": [],
+          "url": ""
+        }
+      ],
+      "languages": [
+        "Tamil",
+        "English"
+      ],
+      "achievements": [],
+      "_meta": {
+        "is_fresher": true,
+        "years_of_experience": 0,
+        "source_file": "don2.pdf"
+      }
+    },
+    {
+      "info": {
+        "name": "Unknown Candidate",
+        "role": "",
+        "email": "enitheeshkumar@gmail.com",
+        "phone": "2016 - 2023",
+        "address": "Pandanallur, Tamil",
+        "website": "www.enhancv.com"
+      },
+      "about": "",
+      "skills": [
+        "Python",
+        "JavaScript",
+        "React",
+        "Node.js",
+        "PyTorch",
+        "NumPy",
+        "pandas",
+        "scikit-learn",
+        "OpenCV",
+        "CNN",
+        "Transformer",
+        "Git",
+        "MongoDB"
+      ],
+      "soft_skills": [],
+      "experience": [],
+      "education": [],
+      "projects": [],
+      "languages": [
+        "Tamil",
+        "English"
+      ],
+      "achievements": [],
+      "_meta": {
+        "is_fresher": true,
+        "years_of_experience": 0,
+        "source_file": "final.pdf"
+      }
+    },
+    {
+      "info": {
+        "name": "Nandhaganapathy. K",
+        "role": "",
+        "email": "nandhaganapathy@gmail.com",
+        "phone": "6381944244",
+        "address": "",
+        "website": ""
+      },
+      "about": "To make contribution in the organization with best of my ability and also to Develop new skills during\nthe interaction to achieve new heights.",
+      "skills": [],
+      "soft_skills": [],
+      "experience": [],
+      "education": [
+        {
+          "degree": "me : Kittappa S",
+          "institution": "Date of Birth : 2006-05-14",
+          "started": "",
+          "ended": "",
+          "score": null,
+          "score_max": null,
+          "score_type": null
+        }
+      ],
+      "projects": [],
+      "languages": [],
+      "achievements": [],
+      "_meta": {
+        "is_fresher": true,
+        "years_of_experience": 0,
+        "source_file": "resume.pdf"
+      }
+    },
+    {
+      "info": {
+        "name": "Jackson Career Objective",
+        "role": "",
+        "email": "jmacattack@email.com",
+        "phone": "(123) 456-7890",
+        "address": "Atlanta, GA",
+        "website": ""
+      },
+      "about": "",
+      "skills": [
+        "JavaScript",
+        "HTML Web Designer",
+        "CSS Coca",
+        "Cola",
+        "React.js January 2017",
+        "August 2020 Atlanta",
+        "GA",
+        "Node.js",
+        "Built mock designs and wireframes for landing pages for 5 new",
+        "Angular.js product concepts.",
+        "Created accessible",
+        "responsive",
+        "and functional user interfaces to",
+        "MongoDB",
+        "allow visitors on any device to have the same perfect user",
+        "AWS",
+        "Java experience.",
+        "Created the user experience that fetched",
+        "parsed",
+        "and formatted",
+        "analytic data",
+        "and relayed it into React components.",
+        "Collaborated on Complexity Score tool",
+        "which removed process",
+        "bottlenecks by assigning scores to cost",
+        "time",
+        "and compliance",
+        "issues",
+        "increasing efficiency by 72%.",
+        "Web Development Intern",
+        "SiriusXM",
+        "July 2016",
+        "January 2017 Athens",
+        "Developed user interfaces with modern JavaScript frameworks",
+        "HTML5",
+        "and CSS3",
+        "which improved user satisfaction by 31%.",
+        "Developed object",
+        "oriented code in Node.js with 100% accordance",
+        "to industry and company standards.",
+        "Learned multiple threading",
+        "concurrency",
+        "design patterns",
+        "and their",
+        "impacts on application concurrency.",
+        "Designed and developed web applications using JavaScript",
+        "frameworks React.js and Angular.js to increase target audience",
+        "engagement by 12%."
+      ],
+      "soft_skills": [],
+      "experience": [],
+      "education": [
+        {
+          "degree": "B.S.",
+          "institution": "standards.",
+          "started": "",
+          "ended": "",
+          "score": "38",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        },
+        {
+          "degree": "me designs from client requests.",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": "38",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        },
+        {
+          "degree": "base to AWS",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": "38",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        },
+        {
+          "degree": "ber 2012 - June 2016 $3",
+          "institution": "",
+          "started": "SEPTEMBER 2012",
+          "ended": "JUNE 2016",
+          "score": "38",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        },
+        {
+          "degree": "mentation to teach new team members company",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": "38",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        },
+        {
+          "degree": "best practices in React.js and Node.js.",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": "38",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        },
+        {
+          "degree": "me lead prioritization using",
+          "institution": "",
+          "started": "",
+          "ended": "",
+          "score": "38",
+          "score_max": "100",
+          "score_type": "PERCENTAGE"
+        }
+      ],
+      "projects": [],
+      "languages": [],
+      "achievements": [],
+      "_meta": {
+        "is_fresher": true,
+        "years_of_experience": 0,
+        "source_file": "web-developer-resume-example.pdf"
+      }
+    }
+  ]
+}
