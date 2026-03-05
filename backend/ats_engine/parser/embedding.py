@@ -23,7 +23,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 class FieldScore:
     field: str
     score: float  # 0.0 – 1.0
-    weight: float = 1.0  # importance weight for overall score
+    weight: float = 2.0  # importance weight for overall score
 
     @property
     def score_pct(self) -> str:
@@ -90,12 +90,12 @@ def _weighted_average(scores: list[tuple[float, float]]) -> float:
 
 class EmbeddingScorer:
     DEFAULT_WEIGHTS: dict[str, float] = {
-        "about": 1.5,
-        "skills": 2.0,
-        "soft_skills": 1.0,
+        "about": 0.5,
+        "skills": 3.0,
+        "soft_skills": 2.0,
         "experience": 2.0,
         "education": 1.0,
-        "languages": 0.5,
+        "languages": 2.5,
         "certifications": 1.0,
         "projects": 1.5,
     }
@@ -181,3 +181,22 @@ class EmbeddingScorer:
             "skipped": skipped,
             "elapsed_ms": round((time.perf_counter() - t0) * 1000, 2),
         }
+
+if __name__ == "__main__":
+    emd = EmbeddingScorer()
+    jds = {
+        "skill" : ["html", "css", "js", "react", "figma"],
+        "soft_skill" : ["team work", "effective communiation", "leadership"],
+        "about" : " seeking for fontend developer wih designing skills on figam and photoshop",
+    }
+
+    jd = emd.load_job_description(jds)
+
+    resume_data = { 
+        "skill" : ["html", "css", "js", "react", "figma"],
+        "soft_skill" : ["team work", "effective communication", "leadership"],
+        "about" : "i am a fontend developer wih designing skills on figam and photoshop ",
+    }
+    scores = emd.score(resume_data)
+
+    print(scores)
