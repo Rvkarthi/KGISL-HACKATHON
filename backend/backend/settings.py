@@ -27,7 +27,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "ninja",
     "ninja_jwt",
+    # django apps
     "core",
+    "ats",
 ]
 
 MIDDLEWARE = [

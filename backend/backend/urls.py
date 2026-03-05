@@ -1,3 +1,6 @@
+from ats.api import router as ats_router
+
+# routers
 from core.api import router as auth_router
 from django.contrib import admin
 from django.urls import path
@@ -11,6 +14,7 @@ api = NinjaAPI(
 )
 
 api.add_router("/auth", router=auth_router, tags=["Authentcaion"])
+api.add_router("/ats", router=ats_router, tags=["Ats"])
 
 urlpatterns = [
     path("admin/", admin.site.urls),
