@@ -33,51 +33,52 @@ Install:
 
 from __future__ import annotations
 
-import re
+import datetime
 import io
 import json
+import re
 import warnings
-import datetime
 from pathlib import Path
 
 import numpy as np
 import pdfplumber
+from pdfminer.high_level import extract_text as pdfminer_extract
 from PIL import Image, ImageFilter, ImageOps
 from sentence_transformers import SentenceTransformer
 
-from pdfminer.high_level import extract_text as pdfminer_extract
-
 try:
     import fitz
+
     PYMUPDF_AVAILABLE = True
 except ImportError:
     PYMUPDF_AVAILABLE = False
 
 try:
     import pytesseract
+
     TESSERACT_AVAILABLE = True
     TESS_CONFIG = "--oem 3 --psm 6"
 except ImportError:
     TESSERACT_AVAILABLE = False
 
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MODEL CONFIG
 # ─────────────────────────────────────────────────────────────────────────────
 
-MODEL_NAME       = "Qwen/Qwen2.5-1.5B-Instruct"
-MAX_NEW_TOKENS   = 768     # enough for any single field extraction
-TEMPERATURE      = 0.05    # near-deterministic for JSON
-TOP_P            = 0.9
+MODEL_NAME = "Qwen/Qwen2.5-1.5B-Instruct"
+MAX_NEW_TOKENS = 768  # enough for any single field extraction
+TEMPERATURE = 0.05  # near-deterministic for JSON
+TOP_P = 0.9
 REPETITION_PENALTY = 1.1
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PDF TEXT EXTRACTION  (pdfplumber → pdfminer → Tesseract, unchanged)
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def _pdfplumber_text(filepath: str) -> str:
     lines = []
@@ -91,9 +92,12 @@ def _pdfplumber_text(filepath: str) -> str:
                         y = round(w["top"] / 8) * 8
                         rows.setdefault(y, []).append(w)
                     for y in sorted(rows):
-                        lines.append(" ".join(
-                            w["text"] for w in sorted(rows[y], key=lambda x: x["x0"])
-                        ))
+                        lines.append(
+                            " ".join(
+                                w["text"]
+                                for w in sorted(rows[y], key=lambda x: x["x0"])
+                            )
+                        )
                 else:
                     t = page.extract_text()
                     if t:
@@ -116,7 +120,9 @@ def _preprocess_ocr(img: Image.Image) -> Image.Image:
     img = img.convert("L")
     if img.width < 1800:
         scale = 1800 / img.width
-        img = img.resize((int(img.width * scale), int(img.height * scale)), Image.LANCZOS)
+        img = img.resize(
+            (int(img.width * scale), int(img.height * scale)), Image.LANCZOS
+        )
     img = ImageOps.autocontrast(img, cutoff=2)
     img = img.filter(ImageFilter.SHARPEN)
     img = img.point(lambda p: 0 if p < 150 else 255, "1")
@@ -133,8 +139,11 @@ def _tesseract_ocr(filepath: str) -> str:
             for page in doc:
                 pix = page.get_pixmap(dpi=300)
                 img = Image.open(io.BytesIO(pix.tobytes("png")))
-                pages.append(pytesseract.image_to_string(
-                    _preprocess_ocr(img), lang="eng", config=TESS_CONFIG))
+                pages.append(
+                    pytesseract.image_to_string(
+                        _preprocess_ocr(img), lang="eng", config=TESS_CONFIG
+                    )
+                )
             doc.close()
             return "\n".join(pages) if pages else ""
     except Exception:
@@ -143,8 +152,11 @@ def _tesseract_ocr(filepath: str) -> str:
         with pdfplumber.open(filepath) as pdf:
             for page in pdf.pages:
                 img = page.to_image(resolution=300).original
-                pages.append(pytesseract.image_to_string(
-                    _preprocess_ocr(img), lang="eng", config=TESS_CONFIG))
+                pages.append(
+                    pytesseract.image_to_string(
+                        _preprocess_ocr(img), lang="eng", config=TESS_CONFIG
+                    )
+                )
         return "\n".join(pages)
     except Exception:
         return ""
@@ -171,6 +183,7 @@ def extract_raw_text(filepath: str) -> str:
 # JSON REPAIR UTILITIES
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def _extract_json_block(text: str) -> str:
     """
     Pull the first valid JSON object or array out of model output.
@@ -181,19 +194,19 @@ def _extract_json_block(text: str) -> str:
     text = re.sub(r"\s*```$", "", text.strip())
 
     # Find first { or [
-    for start_char, end_char in [('{', '}'), ('[', ']')]:
+    for start_char, end_char in [("{", "}"), ("[", "]")]:
         idx = text.find(start_char)
         if idx == -1:
             continue
         # Walk forward balancing brackets
-        depth   = 0
-        in_str  = False
-        escape  = False
+        depth = 0
+        in_str = False
+        escape = False
         for i, ch in enumerate(text[idx:], start=idx):
             if escape:
                 escape = False
                 continue
-            if ch == '\\' and in_str:
+            if ch == "\\" and in_str:
                 escape = True
                 continue
             if ch == '"':
@@ -206,7 +219,7 @@ def _extract_json_block(text: str) -> str:
             elif ch == end_char:
                 depth -= 1
                 if depth == 0:
-                    return text[idx:i+1]
+                    return text[idx : i + 1]
     return text
 
 
@@ -218,8 +231,8 @@ def _safe_parse_json(text: str, fallback):
     except (json.JSONDecodeError, ValueError):
         # Last resort: try to fix common issues
         try:
-            fixed = re.sub(r",\s*([}\]])", r"\1", block)   # trailing commas
-            fixed = re.sub(r"'", '"', fixed)                 # single → double quotes
+            fixed = re.sub(r",\s*([}\]])", r"\1", block)  # trailing commas
+            fixed = re.sub(r"'", '"', fixed)  # single → double quotes
             return json.loads(fixed)
         except Exception:
             return fallback
@@ -241,7 +254,9 @@ def _ensure_list(val, item_type=str) -> list:
             continue
         if isinstance(item, dict):
             lang = item.get("language") or item.get("name") or item.get("lang", "")
-            prof = item.get("proficiency") or item.get("level") or item.get("fluency", "")
+            prof = (
+                item.get("proficiency") or item.get("level") or item.get("fluency", "")
+            )
             if not lang:
                 values = [str(v).strip() for v in item.values() if v]
                 merged = " ".join(values).strip()
@@ -276,6 +291,7 @@ def _ensure_str(val) -> str:
 # SLM EXTRACTOR  — field-by-field prompting
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 class SLMExtractor:
     """
     Wraps Qwen2.5-Instruct (or any chat-format Hugging Face model) for
@@ -289,8 +305,8 @@ class SLMExtractor:
 
     def __init__(self, model_name: str = MODEL_NAME):
         print(f"⏳ Loading extraction model: {model_name}")
-        device     = "cuda" if torch.cuda.is_available() else "cpu"
-        dtype      = torch.float16 if device == "cuda" else torch.float32
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        dtype = torch.float16 if device == "cuda" else torch.float32
         print(f"   Device: {device}  |  dtype: {dtype}")
 
         self.tokenizer = AutoTokenizer.from_pretrained(
@@ -306,7 +322,7 @@ class SLMExtractor:
             self.model = self.model.to(device)
 
         self.model.eval()
-        self.device     = device
+        self.device = device
         self.model_name = model_name
         print(f"✅ Extraction model ready  ({model_name})")
 
@@ -317,7 +333,7 @@ class SLMExtractor:
         """
         messages = [
             {"role": "system", "content": system},
-            {"role": "user",   "content": user},
+            {"role": "user", "content": user},
         ]
 
         if hasattr(self.tokenizer, "apply_chat_template"):
@@ -328,11 +344,7 @@ class SLMExtractor:
             )
         else:
             # Manual fallback for models without chat template
-            prompt = (
-                f"<|system|>\n{system}\n"
-                f"<|user|>\n{user}\n"
-                f"<|assistant|>\n"
-            )
+            prompt = f"<|system|>\n{system}\n<|user|>\n{user}\n<|assistant|>\n"
 
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
         input_len = inputs["input_ids"].shape[1]
@@ -378,13 +390,13 @@ JSON:"""
         raw = self._chat(self.SYSTEM, prompt)
         result = _safe_parse_json(raw, {})
         return {
-            "name":    _ensure_str(result.get("name", "Unknown Candidate")),
-            "role":    _ensure_str(result.get("role", "")),
-            "email":   _ensure_str(result.get("email", "")),
-            "phone":   _ensure_str(result.get("phone", "")),
+            "name": _ensure_str(result.get("name", "Unknown Candidate")),
+            "role": _ensure_str(result.get("role", "")),
+            "email": _ensure_str(result.get("email", "")),
+            "phone": _ensure_str(result.get("phone", "")),
             "address": _ensure_str(result.get("address", "")),
             "website": _ensure_str(result.get("website", "")),
-            "about":   _ensure_str(result.get("about", "")),
+            "about": _ensure_str(result.get("about", "")),
         }
 
     def _extract_skills(self, text: str) -> dict:
@@ -405,12 +417,12 @@ Resume:
 {text[:2500]}
 
 JSON:"""
-        raw    = self._chat(self.SYSTEM, prompt)
+        raw = self._chat(self.SYSTEM, prompt)
         result = _safe_parse_json(raw, {})
         return {
-            "skills":      _ensure_list(result.get("skills", [])),
+            "skills": _ensure_list(result.get("skills", [])),
             "soft_skills": _ensure_list(result.get("soft_skills", [])),
-            "languages":   _ensure_list(result.get("languages", [])),
+            "languages": _ensure_list(result.get("languages", [])),
         }
 
     def _extract_experience(self, text: str) -> list:
@@ -430,7 +442,7 @@ Resume:
 {text[:2500]}
 
 JSON array:"""
-        raw    = self._chat(self.SYSTEM, prompt)
+        raw = self._chat(self.SYSTEM, prompt)
         result = _safe_parse_json(raw, [])
         if not isinstance(result, list):
             return []
@@ -438,13 +450,15 @@ JSON array:"""
         for e in result:
             if not isinstance(e, dict):
                 continue
-            cleaned.append({
-                "title":       _ensure_str(e.get("title", "")),
-                "company":     _ensure_str(e.get("company", "")),
-                "joined":      _ensure_str(e.get("joined", "")),
-                "left":        _ensure_str(e.get("left", "")),
-                "description": _ensure_str(e.get("description", "")),
-            })
+            cleaned.append(
+                {
+                    "title": _ensure_str(e.get("title", "")),
+                    "company": _ensure_str(e.get("company", "")),
+                    "joined": _ensure_str(e.get("joined", "")),
+                    "left": _ensure_str(e.get("left", "")),
+                    "description": _ensure_str(e.get("description", "")),
+                }
+            )
         return cleaned
 
     def _extract_education(self, text: str) -> list:
@@ -466,7 +480,7 @@ Resume:
 {text[:2500]}
 
 JSON array:"""
-        raw    = self._chat(self.SYSTEM, prompt)
+        raw = self._chat(self.SYSTEM, prompt)
         result = _safe_parse_json(raw, [])
         if not isinstance(result, list):
             return []
@@ -474,15 +488,17 @@ JSON array:"""
         for e in result:
             if not isinstance(e, dict):
                 continue
-            cleaned.append({
-                "degree":      _ensure_str(e.get("degree", "")),
-                "institution": _ensure_str(e.get("institution", "")),
-                "started":     _ensure_str(e.get("started", "")),
-                "ended":       _ensure_str(e.get("ended", "")),
-                "score":       _ensure_str(e.get("score", "")) or None,
-                "score_max":   _ensure_str(e.get("score_max", "")) or None,
-                "score_type":  _ensure_str(e.get("score_type", "")) or None,
-            })
+            cleaned.append(
+                {
+                    "degree": _ensure_str(e.get("degree", "")),
+                    "institution": _ensure_str(e.get("institution", "")),
+                    "started": _ensure_str(e.get("started", "")),
+                    "ended": _ensure_str(e.get("ended", "")),
+                    "score": _ensure_str(e.get("score", "")) or None,
+                    "score_max": _ensure_str(e.get("score_max", "")) or None,
+                    "score_type": _ensure_str(e.get("score_type", "")) or None,
+                }
+            )
         return cleaned
 
     def _extract_projects_achievements(self, text: str) -> dict:
@@ -511,7 +527,7 @@ Resume:
 {text[:2500]}
 
 JSON:"""
-        raw    = self._chat(self.SYSTEM, prompt)
+        raw = self._chat(self.SYSTEM, prompt)
         result = _safe_parse_json(raw, {})
         if not isinstance(result, dict):
             result = {}
@@ -523,17 +539,19 @@ JSON:"""
         for p in projects:
             if not isinstance(p, dict):
                 continue
-            clean_projects.append({
-                "title":        _ensure_str(p.get("title", "")),
-                "started":      _ensure_str(p.get("started", "")),
-                "ended":        _ensure_str(p.get("ended", "")),
-                "description":  _ensure_str(p.get("description", "")),
-                "technologies": _ensure_list(p.get("technologies", [])),
-                "url":          _ensure_str(p.get("url", "")),
-            })
+            clean_projects.append(
+                {
+                    "title": _ensure_str(p.get("title", "")),
+                    "started": _ensure_str(p.get("started", "")),
+                    "ended": _ensure_str(p.get("ended", "")),
+                    "description": _ensure_str(p.get("description", "")),
+                    "technologies": _ensure_list(p.get("technologies", [])),
+                    "url": _ensure_str(p.get("url", "")),
+                }
+            )
 
         return {
-            "projects":     clean_projects,
+            "projects": clean_projects,
             "achievements": _ensure_list(result.get("achievements", [])),
         }
 
@@ -563,25 +581,27 @@ JSON:"""
 
         print("   🔍 Extracting: projects + achievements...", end=" ", flush=True)
         proj_ach = self._extract_projects_achievements(text)
-        print(f"✓  ({len(proj_ach['projects'])} projects, "
-              f"{len(proj_ach['achievements'])} achievements)")
+        print(
+            f"✓  ({len(proj_ach['projects'])} projects, "
+            f"{len(proj_ach['achievements'])} achievements)"
+        )
 
         return {
             "info": {
-                "name":    info_data["name"],
-                "role":    info_data["role"],
-                "email":   info_data["email"],
-                "phone":   info_data["phone"],
+                "name": info_data["name"],
+                "role": info_data["role"],
+                "email": info_data["email"],
+                "phone": info_data["phone"],
                 "address": info_data["address"],
                 "website": info_data["website"],
             },
-            "about":        info_data["about"],
-            "skills":       skills_data["skills"],
-            "soft_skills":  skills_data["soft_skills"],
-            "languages":    skills_data["languages"],
-            "experience":   experience,
-            "education":    education,
-            "projects":     proj_ach["projects"],
+            "about": info_data["about"],
+            "skills": skills_data["skills"],
+            "soft_skills": skills_data["soft_skills"],
+            "languages": skills_data["languages"],
+            "experience": experience,
+            "education": education,
+            "projects": proj_ach["projects"],
             "achievements": proj_ach["achievements"],
         }
 
@@ -603,8 +623,8 @@ def _get_years_of_experience(experience: list) -> float:
     now = datetime.datetime.now()
     for exp in experience:
         start_yr = _parse_year(exp.get("joined", ""))
-        left     = str(exp.get("left", "")).strip().lower()
-        end_yr   = now.year if left in _PRESENT_WORDS else _parse_year(left)
+        left = str(exp.get("left", "")).strip().lower()
+        end_yr = now.year if left in _PRESENT_WORDS else _parse_year(left)
         if start_yr and end_yr and end_yr >= start_yr:
             total_months += (end_yr - start_yr) * 12
     return round(total_months / 12, 1) if total_months else 0.0
@@ -623,10 +643,22 @@ def _detect_fresher(parsed: dict) -> bool:
         return True
 
     REAL_JOB_WORDS = (
-        "engineer", "developer", "analyst", "scientist",
-        "manager", "lead", "architect", "consultant",
-        "designer", "researcher", "specialist", "associate",
-        "officer", "executive", "coordinator", "programmer",
+        "engineer",
+        "developer",
+        "analyst",
+        "scientist",
+        "manager",
+        "lead",
+        "architect",
+        "consultant",
+        "designer",
+        "researcher",
+        "specialist",
+        "associate",
+        "officer",
+        "executive",
+        "coordinator",
+        "programmer",
     )
     STUDENT_WORDS = ("student", "intern", "trainee", "fresher", "volunteer")
 
@@ -650,22 +682,22 @@ def _detect_fresher(parsed: dict) -> bool:
 def _build_raw_sections(parsed: dict, raw_text: str) -> dict:
     """Reconstruct raw_sections for downstream matcher/clusterer compatibility."""
     return {
-        "about":        parsed.get("about", ""),
-        "skills":       " ".join(parsed.get("skills", []) + parsed.get("soft_skills", [])),
-        "experience":   " ".join(
-            f"{e.get('title','')} {e.get('company','')} {e.get('description','')}"
+        "about": parsed.get("about", ""),
+        "skills": " ".join(parsed.get("skills", []) + parsed.get("soft_skills", [])),
+        "experience": " ".join(
+            f"{e.get('title', '')} {e.get('company', '')} {e.get('description', '')}"
             for e in parsed.get("experience", [])
         ),
-        "projects":     " ".join(
-            f"{p.get('title','')} {p.get('description','')} {' '.join(p.get('technologies',[]))}"
+        "projects": " ".join(
+            f"{p.get('title', '')} {p.get('description', '')} {' '.join(p.get('technologies', []))}"
             for p in parsed.get("projects", [])
         ),
-        "education":    " ".join(
-            f"{e.get('degree','')} {e.get('institution','')}"
+        "education": " ".join(
+            f"{e.get('degree', '')} {e.get('institution', '')}"
             for e in parsed.get("education", [])
         ),
         "achievements": " ".join(parsed.get("achievements", [])),
-        "other":        raw_text[:1000],
+        "other": raw_text[:1000],
     }
 
 
@@ -673,9 +705,10 @@ def _build_raw_sections(parsed: dict, raw_text: str) -> dict:
 # EMBEDDINGS  (unchanged from previous versions)
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def build_embeddings(parsed: dict, model: SentenceTransformer) -> dict:
     emb: dict = {}
-    raw  = parsed.get("_meta", {}).get("raw_sections", {})
+    raw = parsed.get("_meta", {}).get("raw_sections", {})
 
     if parsed.get("about"):
         emb["summary"] = model.encode(parsed["about"], normalize_embeddings=True)
@@ -699,7 +732,7 @@ def build_embeddings(parsed: dict, model: SentenceTransformer) -> dict:
     edu_list = parsed.get("education", [])
     if edu_list:
         edu_str = " | ".join(
-            f"{e.get('degree','')} {e.get('institution','')}".strip()
+            f"{e.get('degree', '')} {e.get('institution', '')}".strip()
             for e in edu_list
         )
         if edu_str.strip():
@@ -714,6 +747,7 @@ def build_embeddings(parsed: dict, model: SentenceTransformer) -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 # HIGH-LEVEL CLASS
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 class ResumeParser:
     """
@@ -736,16 +770,18 @@ class ResumeParser:
         parser = ResumeParser(slm_name="Qwen/Qwen2.5-3B-Instruct")     # more accurate
     """
 
-    def __init__(self,
-                 embed_model: str = "BAAI/bge-large-en-v1.5",
-                 slm_name:    str = MODEL_NAME):
+    def __init__(
+        self, embed_model: str = "BAAI/bge-large-en-v1.5", slm_name: str = MODEL_NAME
+    ):
 
         self.extractor = SLMExtractor(slm_name)
 
         print(f"⏳ Loading embedding model: {embed_model}")
         self.model = SentenceTransformer(embed_model)
         print("✅ Embedding model ready.")
-        print(f"   Tesseract OCR  : {'active' if TESSERACT_AVAILABLE else 'unavailable'}")
+        print(
+            f"   Tesseract OCR  : {'active' if TESSERACT_AVAILABLE else 'unavailable'}"
+        )
         print(f"   PyMuPDF        : {'active' if PYMUPDF_AVAILABLE else 'unavailable'}")
 
     def process(self, filepath: str) -> dict:
@@ -762,11 +798,13 @@ class ResumeParser:
 
         # 3. Inject meta
         parsed["_meta"] = {
-            "is_fresher":          _detect_fresher(parsed),
-            "years_of_experience": _get_years_of_experience(parsed.get("experience", [])),
-            "source_file":         filename,
-            "raw_sections":        _build_raw_sections(parsed, raw_text),
-            "raw_text":            raw_text[:3000],
+            "is_fresher": _detect_fresher(parsed),
+            "years_of_experience": _get_years_of_experience(
+                parsed.get("experience", [])
+            ),
+            "source_file": filename,
+            "raw_sections": _build_raw_sections(parsed, raw_text),
+            "raw_text": raw_text[:3000],
         }
 
         # 4. Build embeddings
@@ -775,19 +813,23 @@ class ResumeParser:
         # Summary
         info = parsed.get("info", {})
         meta = parsed["_meta"]
-        print(f"   ✅ Name     : {info.get('name','?')}")
-        print(f"   ✅ Role     : {info.get('role','—')}")
-        print(f"   ✅ Skills   : {parsed.get('skills',[])[:5]}")
-        print(f"   ✅ Projects : {len(parsed.get('projects',[]))}  |  "
-              f"Edu: {len(parsed.get('education',[]))}  |  "
-              f"Exp: {len(parsed.get('experience',[]))}")
-        print(f"   ✅ Fresher  : {meta['is_fresher']}  YoE: {meta['years_of_experience']}")
+        print(f"   ✅ Name     : {info.get('name', '?')}")
+        print(f"   ✅ Role     : {info.get('role', '—')}")
+        print(f"   ✅ Skills   : {parsed.get('skills', [])[:5]}")
+        print(
+            f"   ✅ Projects : {len(parsed.get('projects', []))}  |  "
+            f"Edu: {len(parsed.get('education', []))}  |  "
+            f"Exp: {len(parsed.get('experience', []))}"
+        )
+        print(
+            f"   ✅ Fresher  : {meta['is_fresher']}  YoE: {meta['years_of_experience']}"
+        )
 
         return {"parsed": parsed, "embeddings": embeddings}
 
     def process_many(self, filepaths: list) -> dict:
         db: dict = {}
         for fp in filepaths:
-            key     = Path(fp).name
+            key = Path(fp).name
             db[key] = self.process(fp)
         return db
