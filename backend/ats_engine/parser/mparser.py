@@ -307,8 +307,8 @@ def _parse_page(page) -> Dict:
         return {
             "meta": {"layout": "single"},
             "header": None,
-            "left_content": "",
-            "right_content": None,
+            "left": "",
+            "right": None,
         }
 
     all_lines = _group_into_lines(words)
@@ -318,8 +318,8 @@ def _parse_page(page) -> Dict:
         return {
             "meta": {"layout": "single"},
             "header": None,
-            "left_content": _lines_to_text(all_lines),
-            "right_content": None,
+            "left": _lines_to_text(all_lines),
+            "right": None,
         }
 
     # Font data for section-heading detection
@@ -389,7 +389,7 @@ def _pretty_print(result: Dict):
         print("\n  Page %d: layout=%s" % (i, p["meta"]["layout"]))
         if p.get("header"):
             print("  HEADER : %r" % p["header"])
-        if p.get("left_content"):
-            print("  LEFT   : %r" % p["left_content"][:200].replace("\n", " | "))
-        if p.get("right_content"):
-            print("  RIGHT  : %r" % p["right_content"][:200].replace("\n", " | "))
+        if p.get("left"):
+            print("  LEFT   : %r" % p["left"][:200].replace("\n", " | "))
+        if p.get("right"):
+            print("  RIGHT  : %r" % p["right"][:200].replace("\n", " | "))

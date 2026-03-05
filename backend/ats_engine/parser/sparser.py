@@ -31,7 +31,6 @@ Usage
 
 from __future__ import annotations
 
-import json
 import logging
 import re
 from dataclasses import asdict, dataclass, field
@@ -154,6 +153,7 @@ SECTION_TOKENS: list[tuple[str, list[str]]] = [
             "PROFESSIONAL SUMMARY",
             "ABOUT ME",
             "ABOUT",
+            "PROFILE SUMMARY",
         ],
     ),
 ]

@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "ninja",
     "ninja_jwt",
+    "ninja_extra",
     # django apps
     "core",
     "ats",
