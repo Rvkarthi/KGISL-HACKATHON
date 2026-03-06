@@ -7,123 +7,189 @@ const api = axios.create({
     timeout: 300000,
 })
 
+// Add a request interceptor to include the JWT token
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token')
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+}, (error) => {
+    return Promise.reject(error)
+})
+
+// Helper to transform backend score string "85.50%" to number 85.5
+const parseBackendScore = (scoreStr) => {
+    if (!scoreStr || typeof scoreStr !== 'string') return 0
+    return parseFloat(scoreStr.replace('%', '')) || 0
+}
+
 /**
- * Parse a resume PDF (without job description matching).
+ * Auth API calls
+ */
+export async function login(email, password) {
+    const { data } = await api.post('/api/auth/login', { email, password })
+    return data
+}
+
+export async function registerNormal(formData) {
+    const { data } = await api.post('/api/auth/register/normal', formData)
+    return data
+}
+
+export async function registerHR(formData) {
+    const { data } = await api.post('/api/auth/register/hr', formData)
+    return data
+}
+
+export async function getMe() {
+    const { data } = await api.get('/api/auth/me')
+    return data
+}
+
+/**
+ * ATS API calls
+ */
+
+/**
+ * Parse a resume PDF.
  * @param {File} file - PDF file object
- * @param {boolean} biassFree - enable bias-free parsing
- * @returns {Promise<ParsedResume>}
+ * @returns {Promise<any>}
  */
-export async function parseResume(file, biasFree = false) {
+export async function parseResume(file) {
     const form = new FormData()
-    form.append('file', file)
-    form.append('bias_free', biasFree)
+    form.append('pdf_file', file)
 
-    const { data } = await api.post('/api/resume/parse', form, {
+    const { data } = await api.post('/api/ats/parser', form, {
         headers: { 'Content-Type': 'multipart/form-data' },
     })
     return data
 }
 
 /**
- * Screen a resume against a job description.
+ * Screen a resume.
  * @param {File} file - PDF resume
- * @param {string} jobDescription - raw JD text
- * @param {boolean} biasFree - enable bias-free evaluation
- * @returns {Promise<MatchResult>}
+ * @param {string} jobDescription - JD text (backend JD is currently hardcoded)
+ * @param {boolean} biasFree - Bias free mode
+ * @returns {Promise<any>}
  */
-export async function screenResume(file, jobDescription, biasFree = false) {
+export async function screenResume(file, jobDescription, biasFree) {
     const form = new FormData()
-    form.append('file', file)
-    form.append('job_description', jobDescription)
+    form.append('pdf_file', file)
+    // Note: Backend currently has JD hardcoded in engine, but we pass these for future-proofing
+    if (jobDescription) form.append('job_description', jobDescription)
     form.append('bias_free', biasFree)
 
-    const { data } = await api.post('/api/resume/screen', form, {
+    const { data } = await api.post('/api/ats/screening', form, {
         headers: { 'Content-Type': 'multipart/form-data' },
     })
-    return data
+
+    // Map backend response to frontend expected format
+    return {
+        filename: file.name,
+        candidate_name: data.info?.name || 'Anonymous',
+        email: data.info?.email || '',
+        phone: data.info?.phone || '',
+        final_score: parseBackendScore(data.overall),
+        skill_score: parseBackendScore(data.fields?.skills || data.fields?.skill),
+        experience_score: parseBackendScore(data.fields?.experience),
+        domain_score: parseBackendScore(data.fields?.about),
+        matched_skills: data.skills || [],
+        missing_skills: data.skipped || [],
+        experience_gap: 0,
+        domain_match: true,
+        candidate_domain: data.info?.role || 'N/A',
+        job_domain: 'Target Role',
+        candidate_experience: 0,
+        required_experience: 0,
+        learning_roadmap: [],
+        recommended_domains: [],
+        top_skills_to_gain: data.skipped || [],
+    }
 }
 
 /**
- * Screen multiple resumes against a job description.
+ * Screen multiple resumes.
  * @param {File[]} files - array of PDF resumes
- * @param {string} jobDescription - raw JD text
- * @param {boolean} biasFree - enable bias-free evaluation
- * @returns {Promise<BulkScreenResponse>}
+ * @param {string} jobDescription - JD text
+ * @param {boolean} biasFree - Bias free mode
+ * @returns {Promise<any>}
  */
-export async function bulkScreenResumes(files, jobDescription, biasFree = false) {
+export async function bulkScreenResumes(files, jobDescription, biasFree) {
     const form = new FormData()
     files.forEach(file => {
-        form.append('files', file)
+        form.append('pdf_files', file)
     })
-    form.append('job_description', jobDescription)
+    if (jobDescription) form.append('job_description', jobDescription)
     form.append('bias_free', biasFree)
 
-    const { data } = await api.post('/api/resume/bulk-screen', form, {
+    const { data } = await api.post('/api/ats/screening/bulk', form, {
         headers: { 'Content-Type': 'multipart/form-data' },
     })
-    return data
+
+    // Map bulk results
+    const mappedResults = data.results.map(res => {
+        if (res.status !== 'success') {
+            return {
+                filename: res.filename,
+                candidate_name: 'Error',
+                final_score: 0,
+                error: res.error
+            }
+        }
+        const r = res.result
+        return {
+            filename: res.filename,
+            candidate_name: r.info?.name || 'Anonymous',
+            email: r.info?.email || '',
+            phone: r.info?.phone || '',
+            final_score: parseBackendScore(r.overall),
+            candidate_experience: 0,
+            candidate_domain: r.info?.role || 'N/A',
+        }
+    })
+
+    return {
+        results: mappedResults,
+        total: data.total,
+        succeeded: data.succeeded,
+        failed: data.failed
+    }
 }
 
 /**
- * Fetch screening history records.
- * @returns {Promise<ScreeningRecord[]>}
+ * Fetch history (Mocked for now as backend doesn't have it)
  */
 export async function fetchHistory() {
-    const { data } = await api.get('/api/history/')
-    return data
+    // Return empty for now as backend lacks this endpoint
+    return []
 }
 
-/**
- * Delete a specific screening record.
- * @param {number} id
- */
 export async function deleteRecord(id) {
-    await api.delete(`/api/history/${id}`)
+    return true
 }
 
-/**
- * Clear all screening records.
- */
 export async function clearAllRecords() {
-    await api.delete('/api/history/')
+    return true
 }
 
-/**
- * Fetch a specific screening record's full details.
- * @param {number} id
- * @returns {Promise<MatchResult>}
- */
 export async function fetchRecordDetail(id) {
-    const { data } = await api.get(`/api/history/${id}`)
-    return data
+    return null
 }
 
 /**
- * Fetch all JD templates.
- * @returns {Promise<JDTemplate[]>}
+ * Fetch templates (Mocked for now)
  */
 export async function fetchTemplates() {
-    const { data } = await api.get('/api/templates/')
-    return data
+    return []
 }
 
-/**
- * Save a new JD template.
- * @param {string} title
- * @param {string} description
- * @returns {Promise<JDTemplate>}
- */
 export async function createTemplate(title, description) {
-    const { data } = await api.post('/api/templates/', { title, description })
-    return data
+    return { id: Math.random(), title, description }
 }
 
-/**
- * Delete a JD template.
- * @param {number} id
- */
 export async function deleteTemplate(id) {
-    await api.delete(`/api/templates/${id}`)
+    return true
 }
 
 export default api

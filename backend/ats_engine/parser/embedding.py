@@ -15,6 +15,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+import torch
 
 # ---------------------------------------------------------------------------
 # Data classes
@@ -75,19 +76,51 @@ def _coerce_to_text(value: Any) -> str | None:
         return " ".join(str(v) for v in value.values() if v).strip() or None
     return None
 
-
 def _weighted_average(scores: list[tuple[float, float]]) -> float:
     total_weight = sum(w for _, w in scores)
     if total_weight == 0:
         return 0.0
     return sum(s * w for s, w in scores) / total_weight
+def _load_model(model_name: str, device: str) -> SentenceTransformer:
+    """
+    Load a SentenceTransformer model safely on any device.
 
+    The meta-tensor error occurs because newer transformers lazily
+    initialise weights on a 'meta' device.  Passing device= too early
+    tries to copy non-existent data.
+
+    Fix: force eager weight loading via model_kwargs={"low_cpu_mem_usage": False},
+    which tells transformers to skip the meta-device optimisation and
+    materialise weights immediately on CPU, after which .to(device) is safe.
+    """
+    model = SentenceTransformer(
+        model_name,
+        device="cpu",
+        model_kwargs={"low_cpu_mem_usage": False},
+    )
+    if device != "cpu":
+        model.to(torch.device(device))
+    return model
+
+
+def _resolve_device(requested: str | None) -> str:
+    """
+    Safely resolve the target device.
+    - None  → auto-pick cuda if available, else cpu
+    - "cuda" / "cuda:N" → validated, falls back to cpu if unavailable
+    - "cpu" → always honoured
+    """
+    if requested is None:
+        return "cuda" if torch.cuda.is_available() else "cpu"
+    if requested.startswith("cuda"):
+        if torch.cuda.is_available():
+            return requested
+        return "cpu"
+    return requested
 
 # ---------------------------------------------------------------------------
 # Main scorer class
 # ---------------------------------------------------------------------------
-
-
 class EmbeddingScorer:
     DEFAULT_WEIGHTS: dict[str, float] = {
         "about": 0.5,
@@ -107,13 +140,26 @@ class EmbeddingScorer:
         batch_size: int = 64,
         device: str | None = None,
     ) -> None:
-        self.model = SentenceTransformer(model_name, device=device)
+        self.device = _resolve_device(device)
         self.batch_size = batch_size
         self.field_weights: dict[str, float] = {
             **self.DEFAULT_WEIGHTS,
             **(field_weights or {}),
         }
+
+        # Load on CPU first — avoids the meta-tensor error — then move
+        self.model = _load_model(model_name, self.device)
+
         self._jd_embeddings: dict[str, np.ndarray] = {}
+
+    def _encode(self, texts: list[str]) -> np.ndarray:
+        return self.model.encode(
+            texts,
+            batch_size=self.batch_size,
+            show_progress_bar=False,
+            normalize_embeddings=True,
+            device=self.device,
+        )
 
     def load_job_description(self, jd: dict[str, Any]) -> None:
         if not jd:
@@ -124,12 +170,7 @@ class EmbeddingScorer:
         if not texts:
             raise ValueError("No usable text found in the job description.")
 
-        encoded = self.model.encode(
-            list(texts.values()),
-            batch_size=self.batch_size,
-            show_progress_bar=False,
-            normalize_embeddings=True,
-        )
+        encoded = self._encode(list(texts.values()))
         self._jd_embeddings = dict(zip(texts.keys(), encoded))
 
     def score(self, resume: dict[str, Any]) -> dict:
@@ -151,23 +192,16 @@ class EmbeddingScorer:
         if not fields_to_score:
             return {"overall": "0.00%", "fields": {}, "skipped": skipped}
 
-        resume_vectors = self.model.encode(
-            list(fields_to_score.values()),
-            batch_size=self.batch_size,
-            show_progress_bar=False,
-            normalize_embeddings=True,
-        )
+        resume_vectors = self._encode(list(fields_to_score.values()))
 
         field_results: dict[str, str] = {}
         weighted_pairs: list[tuple[float, float]] = []
 
         for idx, key in enumerate(fields_to_score):
-            raw = float(
-                cosine_similarity(
-                    resume_vectors[idx].reshape(1, -1),
-                    self._jd_embeddings[key].reshape(1, -1),
-                )[0][0]
-            )
+            raw = float(cosine_similarity(
+                resume_vectors[idx].reshape(1, -1),
+                self._jd_embeddings[key].reshape(1, -1),
+            )[0][0])
             score = max(0.0, min(1.0, raw))
             weight = self.field_weights.get(key, 1.0)
             field_results[key] = f"{score * 100:.2f}%"
@@ -181,7 +215,6 @@ class EmbeddingScorer:
             "skipped": skipped,
             "elapsed_ms": round((time.perf_counter() - t0) * 1000, 2),
         }
-
 if __name__ == "__main__":
     emd = EmbeddingScorer()
     jds = {

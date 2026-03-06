@@ -8,7 +8,7 @@ def parse(pdf_bytes: bytes) -> dict:
     half = parse_resume(pdf_bytes)
     parser = ResumeParser(half).parse()
 
-    scorer = EmbeddingScorer()
+    scorer = EmbeddingScorer(device="cpu")
     scorer.load_job_description(
         {
             "about": "should be in ML and expertise",
