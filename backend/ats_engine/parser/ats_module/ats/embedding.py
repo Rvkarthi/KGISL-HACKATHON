@@ -23,7 +23,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 class FieldScore:
     field: str
     score: float  # 0.0 – 1.0
-    weight: float = 2.0  # importance weight for overall score
+    weight: float = 2.0
 
     @property
     def score_pct(self) -> str:
@@ -58,8 +58,6 @@ class ScoringResult:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-
 def _coerce_to_text(value: Any) -> str | None:
     if isinstance(value, str):
         return value.strip() or None
@@ -86,8 +84,6 @@ def _weighted_average(scores: list[tuple[float, float]]) -> float:
 # ---------------------------------------------------------------------------
 # Main scorer class
 # ---------------------------------------------------------------------------
-
-
 class EmbeddingScorer:
     DEFAULT_WEIGHTS: dict[str, float] = {
         "about": 0.5,
@@ -131,6 +127,16 @@ class EmbeddingScorer:
             normalize_embeddings=True,
         )
         self._jd_embeddings = dict(zip(texts.keys(), encoded))
+
+    def get_embedding(self, data: dict[str, Any]) -> list[float]:
+        """Convert a dict (resume or JD) to a single embedding vector."""
+        texts = []
+        for v in data.values():
+            t = _coerce_to_text(v)
+            if t:
+                texts.append(t)
+        combined = " ".join(texts)
+        return self.model.encode([combined], normalize_embeddings=True)[0].tolist()
 
     def score(self, resume: dict[str, Any]) -> dict:
         if not self._jd_embeddings:
@@ -181,22 +187,3 @@ class EmbeddingScorer:
             "skipped": skipped,
             "elapsed_ms": round((time.perf_counter() - t0) * 1000, 2),
         }
-
-if __name__ == "__main__":
-    emd = EmbeddingScorer()
-    jds = {
-        "skill" : ["html", "css", "js", "react", "figma"],
-        "soft_skill" : ["team work", "effective communiation", "leadership"],
-        "about" : " seeking for fontend developer wih designing skills on figam and photoshop",
-    }
-
-    jd = emd.load_job_description(jds)
-
-    resume_data = { 
-        "skill" : ["html", "css", "js", "react", "figma"],
-        "soft_skill" : ["team work", "effective communication", "leadership"],
-        "about" : "i am a fontend developer wih designing skills on figam and photoshop ",
-    }
-    scores = emd.score(resume_data)
-
-    print(scores)
