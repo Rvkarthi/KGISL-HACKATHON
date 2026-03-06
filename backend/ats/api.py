@@ -60,7 +60,9 @@ TASK_TIMEOUT_SEC = 60
 USE_MULTIPROCESS = os.name != "nt"
 
 
-def _process_one(file_bytes: bytes, filename: str, file_id: str) -> FileResult:
+def _process_one(
+    file_bytes: bytes, filename: str, file_id: str, hr_req: dict
+) -> FileResult:
     """
     Worker function — safe for both ProcessPoolExecutor and ThreadPoolExecutor.
 
@@ -79,7 +81,7 @@ def _process_one(file_bytes: bytes, filename: str, file_id: str) -> FileResult:
             pass
 
     try:
-        result = parse(file_bytes)
+        result = parse(file_bytes, hr_req=hr_req)
         return FileResult(
             file_id=file_id,
             filename=filename,
@@ -113,9 +115,10 @@ def _get_executor(n_workers: int):
 )
 def bulk_resume_screening(
     request,
+    hr_req: HRRequest,
     pdf_files: list[UploadedFile] = File(...),
 ) -> BulkScreeningResponse:
-
+    hr_req = hr_req.dict()
     # ── Validation ────────────────────────────────────────────────────────────
     if not pdf_files:
         raise HttpError(400, "No files uploaded.")
@@ -131,13 +134,13 @@ def bulk_resume_screening(
         )
 
     # ── Read bytes in main process (UploadedFile is NOT picklable) ────────────
-    tasks: list[tuple[bytes, str, str]] = []
+    tasks: list[tuple[bytes, str, str, dict]] = []
     for upload in pdf_files:
         try:
             raw = upload.read()
         except Exception as exc:
             raise HttpError(400, f"Could not read file '{upload.name}': {exc}")
-        tasks.append((raw, upload.name, str(uuid.uuid4())))
+        tasks.append((raw, upload.name, str(uuid.uuid4()), hr_req))
 
     # ── Parallel execution ────────────────────────────────────────────────────
     results: list[FileResult] = []
@@ -145,8 +148,8 @@ def bulk_resume_screening(
     # added job dis
     with _get_executor(n_workers) as executor:
         future_map = {
-            executor.submit(_process_one, raw, name, fid): (name, fid)
-            for raw, name, fid in tasks
+            executor.submit(_process_one, raw, name, fid, hr_req=jd): (name, fid)
+            for raw, name, fid, jd in tasks
         }
 
         for future in as_completed(future_map, timeout=TASK_TIMEOUT_SEC * len(tasks)):
