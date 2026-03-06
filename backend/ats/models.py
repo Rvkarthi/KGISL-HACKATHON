@@ -1,191 +1,143 @@
-import json
 import uuid
 
-from core.models import User
+from core.models import HRUser
 from django.db import models
 
-# ── Enums ──────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# 2. Job Description (created & owned by HR)
+# ─────────────────────────────────────────────
 
 
-class ApplicationStatus(models.TextChoices):
-    PENDING = "pending", "Pending"
-    REVIEWED = "reviewed", "Reviewed"
-    SHORTLISTED = "shortlisted", "Shortlisted"
-    REJECTED = "rejected", "Rejected"
-    ACCEPTED = "accepted", "Accepted"
+class JobDescription(models.Model):
+    """
+    HR customizes and creates job descriptions.
+    Only accessible by the HR who created it.
+    """
 
-
-# ── Student Profile ────────────────────────────────────────────────────────────
-
-
-class StudentProfile(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="student_profile"
-    )
-    university = models.CharField(max_length=255, blank=True, null=True)
-    degree = models.CharField(max_length=255, blank=True, null=True)
-    graduation_year = models.IntegerField(blank=True, null=True)
-    linkedin_url = models.URLField(blank=True, null=True)
-    portfolio_url = models.URLField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "Student Profile"
-
-    def __str__(self):
-        return f"StudentProfile({self.user.email})"
-
-
-# ── HR Profile ─────────────────────────────────────────────────────────────────
-
-
-class HRProfile(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="hr_profile"
-    )
-    company_name = models.CharField(max_length=255)
-    department = models.CharField(max_length=255, blank=True, null=True)
-    job_title = models.CharField(max_length=255, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "HR Profile"
-
-    def __str__(self):
-        return f"HRProfile({self.user.email} @ {self.company_name})"
-
-
-# ── Resume ─────────────────────────────────────────────────────────────────────
-
-
-class Resume(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    student = models.ForeignKey(
-        StudentProfile, on_delete=models.CASCADE, related_name="resumes"
-    )
-    file_url = models.URLField(blank=True, null=True)
-    file_name = models.CharField(max_length=255)
-    # SQLite: store JSON as text, use the property helpers below
-    parsed_data = models.TextField(blank=True, null=True)
-    is_default = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "Resume"
-
-    def __str__(self):
-        return f"Resume({self.file_name})"
-
-    # ── JSON helpers ──────────────────────────────────────────────────────────
-    @property
-    def parsed_data_json(self):
-        return json.loads(self.parsed_data) if self.parsed_data else None
-
-    @parsed_data_json.setter
-    def parsed_data_json(self, value):
-        self.parsed_data = json.dumps(value) if value is not None else None
-
-
-# ── Job ────────────────────────────────────────────────────────────────────────
-
-
-class Job(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     hr = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="jobs",
-        help_text="The HR user who posted this job.",
+        HRUser, on_delete=models.CASCADE, related_name="job_descriptions"
     )
     title = models.CharField(max_length=255)
-    department = models.CharField(max_length=255, blank=True, null=True)
-    description = models.TextField()
-    requirements = models.TextField()
-    # SQLite: store JSON as text, use the property helper below
-    skills_required = models.TextField(blank=True, null=True)
-    location = models.CharField(max_length=255, blank=True, null=True)
-    salary_range = models.CharField(max_length=100, blank=True, null=True)
+    # ── Core JD Fields ──────────────────────────
+    about = models.TextField(blank=True, help_text="Role overview / company intro")
+    experience = models.TextField(
+        blank=True, help_text="Years and type of experience required"
+    )
+    # ── Structured Skill Fields ─────────────────
+    # Stored as comma-separated text or use ArrayField if on PostgreSQL
+    technical_skills = models.TextField(
+        blank=True, help_text="e.g. Python, Django, React"
+    )
+    soft_skills = models.TextField(
+        blank=True, help_text="e.g. Communication, Leadership"
+    )
+    languages = models.TextField(
+        blank=True, help_text="e.g. English (Fluent), Tamil (Native)"
+    )
+    project_keywords = models.TextField(
+        blank=True, help_text="Keywords to look for in candidate projects"
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Job"
         ordering = ["-created_at"]
+        # Ensures HR can only see their own JDs — enforce in views/queryset too
+        verbose_name = "Job Description"
 
     def __str__(self):
-        return f"Job({self.title})"
-
-    # ── JSON helpers ──────────────────────────────────────────────────────────
-    @property
-    def skills_required_json(self):
-        return json.loads(self.skills_required) if self.skills_required else []
-
-    @skills_required_json.setter
-    def skills_required_json(self, value):
-        self.skills_required = json.dumps(value) if value is not None else None
+        return f"[{self.hr.company_name}] {self.title}"
 
 
-# ── Application ────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# 3. Candidate Submission
+# ─────────────────────────────────────────────
 
 
-class Application(models.Model):
+class CandidateSubmission(models.Model):
+    """
+    Stores each candidate's submission for a specific job.
+    Linked to the HR portal via the JobDescription.
+    """
+
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("processing", "Processing"),
+        ("scored", "Scored"),
+        ("rejected", "Rejected"),
+        ("shortlisted", "Shortlisted"),
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="applications")
-    student = models.ForeignKey(
-        StudentProfile, on_delete=models.CASCADE, related_name="applications"
+    job = models.ForeignKey(
+        JobDescription, on_delete=models.CASCADE, related_name="submissions"
     )
-    resume = models.ForeignKey(
-        Resume, on_delete=models.SET_NULL, null=True, related_name="applications"
+
+    # ── Candidate Info ───────────────────────────
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    # ── Original Resume ──────────────────────────
+    resume_file = models.FileField(
+        upload_to="resumes/original/%Y/%m/",
+        help_text="Original uploaded resume (PDF/DOCX)",
     )
-    status = models.CharField(
-        max_length=20,
-        choices=ApplicationStatus.choices,
-        default=ApplicationStatus.PENDING,
-        db_index=True,
+    resume_text = models.TextField(
+        blank=True, help_text="Extracted raw text from resume (for ATS parsing)"
     )
-    ats_match_score = models.DecimalField(
-        max_digits=5, decimal_places=2, blank=True, null=True
+
+    # ── ATS Result ───────────────────────────────
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    ats_score = models.FloatField(
+        null=True, blank=True, help_text="Overall ATS match score (0–100)"
     )
-    hr_private_notes = models.TextField(blank=True, null=True)
-    applied_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    processed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
-        verbose_name = "Application"
-        unique_together = [("job", "student")]
-        ordering = ["-applied_at"]
+        ordering = ["-submitted_at"]
+        unique_together = [("job", "email")]  # One submission per candidate per job
 
     def __str__(self):
-        return f"Application({self.student} → {self.job})"
+        return f"{self.full_name} → {self.job.title} ({self.ats_score or 'pending'})"
 
 
-# ── Application History ────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────
+# 4. ATS Score Breakdown (per section)
+# ─────────────────────────────────────────────
 
 
-class ApplicationHistory(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    application = models.ForeignKey(
-        Application, on_delete=models.CASCADE, related_name="history"
+class ATSResult(models.Model):
+    """
+    Detailed ATS scoring breakdown for each submission.
+    One-to-one with CandidateSubmission.
+    """
+
+    submission = models.OneToOneField(
+        CandidateSubmission, on_delete=models.CASCADE, related_name="ats_result"
     )
-    status = models.CharField(max_length=20, choices=ApplicationStatus.choices)
-    changed_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="application_changes",
-    )
-    notes = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        verbose_name = "Application History"
-        ordering = ["-created_at"]
+    # ── Per-section scores (0–100) ───────────────
+    skills_score = models.FloatField(null=True, blank=True)
+    soft_skills_score = models.FloatField(null=True, blank=True)
+    experience_score = models.FloatField(null=True, blank=True)
+    language_score = models.FloatField(null=True, blank=True)
+    projects_score = models.FloatField(null=True, blank=True)
+
+    # ── Matched / Missing keywords ───────────────
+    matched_skills = models.TextField(
+        blank=True, help_text="Comma-separated matched skills"
+    )
+    missing_skills = models.TextField(
+        blank=True, help_text="Comma-separated skills not found in resume"
+    )
+    # ── AI / Parser feedback ─────────────────────
+    summary_feedback = models.TextField(
+        blank=True, null=True, help_text="Short AI-generated summary of candidate fit"
+    )
+    evaluated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"History({self.id} → {self.status})"
+        return f"ATSResult for {self.submission.full_name} — Score: {self.submission.ats_score}"

@@ -1,169 +1,215 @@
-from ats.models import HRProfile, StudentProfile
+# django auth
+
 from django.contrib.auth import authenticate
-from django.db import transaction
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.utils.text import slugify
 from ninja import Router
-from ninja.errors import HttpError
-from ninja_jwt.tokens import RefreshToken
+from ninja.security import HttpBearer
+from ninja_jwt.exceptions import TokenError
+from ninja_jwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+from ninja_jwt.tokens import AccessToken, RefreshToken
 
-from core.models import User, UserRole
+# models
+from core.models import HRUser
+
+# schemas
 from core.schemas import (
-    AccessTokenSchema,
-    ChangePasswordSchema,
-    LoginSchema,
-    RefreshSchema,
-    RegisterHRUserSchema,
-    RegisterNormalUserSchema,
-    TokenPairSchema,
-    UpdateHRProfileSchema,
-    UpdateStudentProfileSchema,
-    UserOut,
+    ChangePasswordIn,
+    ErrorOut,
+    HRProfileOut,
+    LoginIn,
+    LogoutIn,
+    MessageOut,
+    RefreshIn,
+    RegisterIn,
+    TokenOut,
+    UpdateProfileIn,
 )
-from core.utils import AuthBearer
 
-router = Router(tags=["Auth"])
-
-
-# ── Helpers ────────────────────────────────────────────────────────────────────
+router = Router(tags=["HR Auth"])
 
 
-def _token_pair(user: User) -> dict:
+# ══════════════════════════════════════════════
+# Security — Bearer token auth
+# ══════════════════════════════════════════════
+
+
+class JWTAuth(HttpBearer):
+    def authenticate(self, request, token: str):
+        try:
+            access = AccessToken(token)
+            user_id = access["user_id"]
+            user = HRUser.objects.get(id=user_id, is_active=True)
+            request.user = user
+            return user
+        except (TokenError, HRUser.DoesNotExist):
+            return None
+
+
+auth = JWTAuth()
+
+
+# ══════════════════════════════════════════════
+# Helpers
+# ══════════════════════════════════════════════
+
+
+def _get_tokens(user: HRUser) -> dict:
+    """Generate access + refresh token pair for a user."""
     refresh = RefreshToken.for_user(user)
-    return {"access": str(refresh.access_token), "refresh": str(refresh)}
+    return {
+        "access": str(refresh.access_token),
+        "refresh": str(refresh),
+    }
 
 
-# ── Register ───────────────────────────────────────────────────────────────────
+def _unique_slug(base_slug: str) -> str:
+    """Ensure portal_slug is unique, appending suffix if needed."""
+    slug = slugify(base_slug)[:48]
+    candidate = slug
+    counter = 1
+    while HRUser.objects.filter(portal_slug=candidate).exists():
+        candidate = f"{slug}-{counter}"
+        counter += 1
+    return candidate
 
 
-@router.post(
-    "/register/normal", response=TokenPairSchema, summary="Register a normal user"
-)
-@transaction.atomic
-def register_normal(request, payload: RegisterNormalUserSchema):
-    if User.objects.filter(email=payload.email).exists():
-        raise HttpError(400, "A user with this email already exists.")
+# ══════════════════════════════════════════════
+# Endpoints
+# ══════════════════════════════════════════════
 
-    user = User.objects.create_user(
+
+@router.post("/register", response={201: TokenOut, 400: ErrorOut}, auth=None)
+def register(request, payload: RegisterIn):
+    """Register a new HR account and return tokens immediately."""
+
+    # ── Uniqueness checks ────────────────────────
+    if HRUser.objects.filter(username=payload.username).exists():
+        return 400, {"detail": "Username already taken"}
+
+    if HRUser.objects.filter(email=payload.email).exists():
+        return 400, {"detail": "Email already registered"}
+
+    # ── Password validation (Django built-in validators) ──
+    try:
+        validate_password(payload.password)
+    except ValidationError as e:
+        return 400, {"detail": " | ".join(e.messages)}
+
+    # ── Resolve portal slug ──────────────────────
+    slug = payload.portal_slug or payload.company_name
+    portal_slug = _unique_slug(slug)
+
+    # ── Create user ──────────────────────────────
+    user = HRUser.objects.create_user(
+        username=payload.username,
         email=payload.email,
-        full_name=payload.full_name,
         password=payload.password,
-        role=UserRole.NORMAL,
-    )
-    StudentProfile.objects.create(user=user)
-    return _token_pair(user)
-
-
-@router.post("/register/hr", response=TokenPairSchema, summary="Register an HR user")
-@transaction.atomic
-def register_hr(request, payload: RegisterHRUserSchema):
-    if User.objects.filter(email=payload.email).exists():
-        raise HttpError(400, "A user with this email already exists.")
-
-    user = User.objects.create_user(
-        email=payload.email,
-        full_name=payload.full_name,
-        password=payload.password,
-        role=UserRole.HR,
-        company=payload.company_name,
-    )
-    HRProfile.objects.create(
-        user=user,
         company_name=payload.company_name,
-        department=payload.department,
-        job_title=payload.job_title,
+        portal_slug=portal_slug,
     )
-    return _token_pair(user)
+
+    return 201, _get_tokens(user)
 
 
-# ── Login ──────────────────────────────────────────────────────────────────────
+@router.post("/login", response={200: TokenOut, 401: ErrorOut}, auth=None)
+def login(request, payload: LoginIn):
+    """Authenticate HR user and return JWT tokens."""
 
+    # Support login via username OR email
+    username = payload.username
+    if "@" in payload.username:
+        try:
+            username = HRUser.objects.get(email=payload.username.lower()).username
+        except HRUser.DoesNotExist:
+            return 401, {"detail": "Invalid credentials"}
 
-@router.post("/login", response=TokenPairSchema, summary="Login with email & password")
-def login(request, payload: LoginSchema):
-    user = authenticate(request, username=payload.email, password=payload.password)
+    user = authenticate(request, username=username, password=payload.password)
+
     if user is None:
-        raise HttpError(401, "Invalid credentials.")
+        return 401, {"detail": "Invalid credentials"}
+
     if not user.is_active:
-        raise HttpError(403, "Account is disabled.")
-    return _token_pair(user)
+        return 401, {"detail": "Account is deactivated. Please contact support."}
+
+    return 200, _get_tokens(user)
 
 
-# ── Token Refresh ──────────────────────────────────────────────────────────────
-
-
-@router.post(
-    "/token/refresh", response=AccessTokenSchema, summary="Refresh access token"
-)
-def token_refresh(request, payload: RefreshSchema):
+@router.post("/token/refresh", response={200: dict, 401: ErrorOut}, auth=None)
+def refresh_token(request, payload: RefreshIn):
+    """Get a new access token using a valid refresh token."""
     try:
         refresh = RefreshToken(payload.refresh)
-        return {"access": str(refresh.access_token)}
-    except Exception:
-        raise HttpError(401, "Invalid or expired refresh token.")
+        return 200, {
+            "access": str(refresh.access_token),
+            "token_type": "bearer",
+        }
+    except TokenError as e:
+        return 401, {"detail": str(e)}
 
 
-# ── Me / Profile ───────────────────────────────────────────────────────────────
-
-
-@router.get("/me", response=UserOut, auth=AuthBearer(), summary="Get current user")
-def me(request):
-    user = request.auth
-    # Prefetch related profiles to avoid N+1
-    if user.is_normal_user:
-        try:
-            _ = user.student_profile
-        except StudentProfile.DoesNotExist:
-            StudentProfile.objects.create(user=user)
-    return user
-
-
-@router.patch(
-    "/me/profile", response=UserOut, auth=AuthBearer(), summary="Update profile"
-)
-@transaction.atomic
-def update_profile(
-    request, payload: UpdateStudentProfileSchema | UpdateHRProfileSchema
-):
-    user = request.auth
-
-    if user.is_normal_user:
-        if not isinstance(payload, UpdateStudentProfileSchema):
-            raise HttpError(400, "Use the student profile schema.")
-        profile, _ = StudentProfile.objects.get_or_create(user=user)
-        for field, value in payload.dict(exclude_none=True).items():
-            setattr(profile, field, value)
-        profile.save()
-
-    elif user.is_hr_user:
-        if not isinstance(payload, UpdateHRProfileSchema):
-            raise HttpError(400, "Use the HR profile schema.")
-        profile, _ = HRProfile.objects.get_or_create(
-            user=user, defaults={"company_name": user.company}
-        )
-        for field, value in payload.dict(exclude_none=True).items():
-            setattr(profile, field, value)
-        profile.save()
-
-    return user
-
-
-@router.post("/me/change-password", auth=AuthBearer(), summary="Change password")
-def change_password(request, payload: ChangePasswordSchema):
-    user = request.auth
-    if not user.check_password(payload.old_password):
-        raise HttpError(400, "Old password is incorrect.")
-    user.set_password(payload.new_password)
-    user.save(update_fields=["password"])
-    return {"detail": "Password updated successfully."}
-
-
-# ── Logout (blacklist refresh token) ──────────────────────────────────────────
-
-
-@router.post("/logout", auth=AuthBearer(), summary="Logout (blacklist refresh token)")
-def logout(request, payload: RefreshSchema):
+@router.post("/logout", response={200: MessageOut, 400: ErrorOut}, auth=auth)
+def logout(request, payload: LogoutIn):
+    """Blacklist the refresh token to invalidate the session."""
     try:
         token = RefreshToken(payload.refresh)
         token.blacklist()
-    except Exception:
-        raise HttpError(400, "Invalid token.")
-    return {"detail": "Successfully logged out."}
+        return 200, {"message": "Logged out successfully"}
+    except TokenError as e:
+        return 400, {"detail": str(e)}
+
+
+@router.get("/me", response={200: HRProfileOut, 401: ErrorOut}, auth=auth)
+def get_profile(request):
+    """Return the currently authenticated HR's profile."""
+    return 200, HRProfileOut.from_user(request.user)
+
+
+@router.patch("/me", response={200: HRProfileOut, 400: ErrorOut}, auth=auth)
+def update_profile(request, payload: UpdateProfileIn):
+    """Update HR profile fields (email, company_name, portal_slug)."""
+    user: HRUser = request.user
+    data = payload.model_dump(exclude_unset=True)
+
+    if "email" in data:
+        email = data["email"].lower()
+        if HRUser.objects.exclude(pk=user.pk).filter(email=email).exists():
+            return 400, {"detail": "Email already in use by another account"}
+        user.email = email
+
+    if "company_name" in data:
+        user.company_name = data["company_name"]
+
+    if "portal_slug" in data:
+        slug = data["portal_slug"]
+        if HRUser.objects.exclude(pk=user.pk).filter(portal_slug=slug).exists():
+            return 400, {"detail": "Portal slug already taken"}
+        user.portal_slug = slug
+
+    user.save()
+    return 200, HRProfileOut.from_user(user)
+
+
+@router.post("/change-password", response={200: MessageOut, 400: ErrorOut}, auth=auth)
+def change_password(request, payload: ChangePasswordIn):
+    """Change the authenticated HR's password and invalidate all existing tokens."""
+    user: HRUser = request.user
+
+    if not user.check_password(payload.old_password):
+        return 400, {"detail": "Old password is incorrect"}
+
+    try:
+        validate_password(payload.new_password, user=user)
+    except ValidationError as e:
+        return 400, {"detail": " | ".join(e.messages)}
+
+    user.set_password(payload.new_password)
+    user.save()
+
+    # ── Blacklist all outstanding refresh tokens for this user ──
+    tokens = OutstandingToken.objects.filter(user=user)
+    for token in tokens:
+        BlacklistedToken.objects.get_or_create(token=token)
+
+    return 200, {"message": "Password changed successfully. Please log in again."}

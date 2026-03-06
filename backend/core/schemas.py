@@ -1,131 +1,128 @@
+import re
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, field_validator, model_validator
+from django.contrib.auth.password_validation import validate_password
+from ninja import Schema
+from pydantic import BaseModel, field_validator, model_validator
 
-from core.models import User
+from core.models import HRUser
 
-# ── Register ───────────────────────────────────────────────────────────────────
-
-
-class RegisterNormalUserSchema(BaseModel):
-    email: EmailStr
-    full_name: str
-    password: str
-    confirm_password: str
-
-    @field_validator("full_name")
-    @classmethod
-    def name_not_empty(cls, v: str) -> str:
-        if not v.strip():
-            raise ValueError("full_name must not be blank.")
-        return v.strip()
-
-    @model_validator(mode="after")
-    def passwords_match(self) -> "RegisterNormalUserSchema":
-        if self.password != self.confirm_password:
-            raise ValueError("Passwords do not match.")
-        return self
+# ══════════════════════════════════════════════
+# Schemas — Input
+# ══════════════════════════════════════════════
 
 
-class RegisterHRUserSchema(BaseModel):
-    email: EmailStr
-    full_name: str
+class RegisterIn(Schema):
+    username: str
+    email: str
     password: str
     confirm_password: str
     company_name: str
-    department: Optional[str] = None
-    job_title: Optional[str] = None
+    portal_slug: Optional[str] = None  # Auto-generated from company_name if omitted
+
+    @field_validator("username")
+    @classmethod
+    def username_alphanumeric(cls, v):
+        if not re.match(r"^\w+$", v):
+            raise ValueError(
+                "Username must be alphanumeric (letters, digits, underscores)"
+            )
+        if len(v) < 3:
+            raise ValueError("Username must be at least 3 characters")
+        return v.lower()
+
+    @field_validator("email")
+    @classmethod
+    def email_valid(cls, v):
+        if "@" not in v:
+            raise ValueError("Invalid email address")
+        return v.lower()
 
     @model_validator(mode="after")
-    def passwords_match(self) -> "RegisterHRUserSchema":
+    def passwords_match(self):
         if self.password != self.confirm_password:
-            raise ValueError("Passwords do not match.")
+            raise ValueError("Passwords do not match")
         return self
 
 
-# ── Login ──────────────────────────────────────────────────────────────────────
-
-
-class LoginSchema(BaseModel):
-    email: EmailStr
+class LoginIn(BaseModel):
+    username: str  # username or email
     password: str
 
 
-class TokenPairSchema(BaseModel):
-    access: str
+class RefreshIn(BaseModel):
     refresh: str
 
 
-class RefreshSchema(BaseModel):
+class LogoutIn(BaseModel):
     refresh: str
 
 
-class AccessTokenSchema(BaseModel):
+class ChangePasswordIn(BaseModel):
+    old_password: str
+    new_password: str
+    confirm_password: str
+
+    @model_validator(mode="after")
+    def passwords_match(self):
+        if self.new_password != self.confirm_password:
+            raise ValueError("New passwords do not match")
+        return self
+
+
+class UpdateProfileIn(BaseModel):
+    company_name: Optional[str] = None
+    email: Optional[str] = None
+    portal_slug: Optional[str] = None
+
+    @field_validator("portal_slug")
+    @classmethod
+    def slug_valid(cls, v):
+        if v and not re.match(r"^[a-z0-9-]+$", v):
+            raise ValueError(
+                "Portal slug can only contain lowercase letters, numbers, and hyphens"
+            )
+        return v
+
+
+# ══════════════════════════════════════════════
+# Schemas — Output
+# ══════════════════════════════════════════════
+
+
+class TokenOut(BaseModel):
     access: str
-
-
-# ── User Out ───────────────────────────────────────────────────────────────────
-
-
-class StudentProfileOut(BaseModel):
-    university: Optional[str] = None
-    degree: Optional[str] = None
-    graduation_year: Optional[int] = None
-    linkedin_url: Optional[str] = None
-    portfolio_url: Optional[str] = None
-
-    class Config:
-        from_attributes = True
+    refresh: str
+    token_type: str = "bearer"
 
 
 class HRProfileOut(BaseModel):
-    company_name: str
-    department: Optional[str] = None
-    job_title: Optional[str] = None
-
-    class Config:
-        from_attributes = True
-
-
-class UserOut(BaseModel):
     id: int
+    username: str
     email: str
-    full_name: str
-    role: str
-    student_profile: Optional[StudentProfileOut] = None
-    hr_profile: Optional[HRProfileOut] = None
+    company_name: str
+    portal_slug: str
+    is_active: bool
+    date_joined: str
+    created_at: str
 
-    class Config:
-        from_attributes = True
-
-
-# ── Update Profile ─────────────────────────────────────────────────────────────
-
-
-class UpdateStudentProfileSchema(BaseModel):
-    university: Optional[str] = None
-    degree: Optional[str] = None
-    graduation_year: Optional[int] = None
-    linkedin_url: Optional[str] = None
-    portfolio_url: Optional[str] = None
-
-
-class UpdateHRProfileSchema(BaseModel):
-    department: Optional[str] = None
-    job_title: Optional[str] = None
-    company_name: Optional[str] = None
+    @classmethod
+    def from_user(cls, user: HRUser) -> "HRProfileOut":
+        return cls(
+            id=user.id,
+            username=user.username,
+            email=user.email,
+            company_name=user.company_name,
+            portal_slug=user.portal_slug,
+            is_active=user.is_active,
+            date_joined=user.date_joined.isoformat(),
+            created_at=user.created_at.isoformat(),
+        )
 
 
-# ── Change Password ────────────────────────────────────────────────────────────
+class MessageOut(BaseModel):
+    message: str
 
 
-class ChangePasswordSchema(BaseModel):
-    old_password: str
-    new_password: str
-    confirm_new_password: str
-
-    @model_validator(mode="after")
-    def passwords_match(self) -> "ChangePasswordSchema":
-        if self.new_password != self.confirm_new_password:
-            raise ValueError("New passwords do not match.")
-        return self
+class ErrorOut(BaseModel):
+    detail: str
