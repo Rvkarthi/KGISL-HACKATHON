@@ -1,4 +1,5 @@
 # concurent
+import json
 import os
 import uuid
 from concurrent.futures import (
@@ -18,7 +19,7 @@ from ninja.errors import HttpError
 from ninja.files import UploadedFile
 from ninja_jwt.authentication import JWTAuth
 
-from ats.schemas import BulkScreeningResponse, FileResult
+from ats.schemas import BulkScreeningResponse, FileResult, HRRequest
 
 router = Router()
 
@@ -35,10 +36,13 @@ def parser_pdf(request, pdf_file: UploadedFile = File(...)) -> dict:
 
 
 @router.post("/screening", response={200: dict, 400: dict})
-def resume_screening(request, pdf_file: UploadedFile = File(...)) -> dict:
+def resume_screening(
+    request, hr_req: HRRequest, pdf_file: UploadedFile = File(...)
+) -> dict:
 
     try:
-        result = parse(pdf_file.read())
+        hr_req = hr_req.dict()
+        result = parse(pdf_file.read(), hr_req)
         return result
     except Exception as error:
         raise HttpError(status_code=500, message=str(error))

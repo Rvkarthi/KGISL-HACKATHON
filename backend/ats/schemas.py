@@ -1,10 +1,17 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from ninja import Schema
 from pydantic import field_validator
 
 from ats.models import JobDescription
+
+
+class HRRequest(Schema):
+    about: str
+    skills: List[str]
+    soft_skills: List[str]
+    languages: List[str]
 
 
 class FileResult(Schema):
