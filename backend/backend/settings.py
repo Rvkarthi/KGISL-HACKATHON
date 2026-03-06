@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "ninja",
     "ninja_jwt",
+    "ninja_jwt.token_blacklist",
     "ninja_extra",
     # django apps
     "core",
@@ -80,7 +81,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = "core.User"
+AUTH_USER_MODEL = "core.HRUser"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -105,6 +106,7 @@ NINJA_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
 
